@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "run.c"
+#include "commands/run.c"
 #include "cli.h"
 
 
@@ -11,7 +11,7 @@ int main() {
     while (1) {
         printf("Enter a command (type 'exit' to quit): ");
         fgets(command, sizeof(command), stdin);
-
+        fflush(stdin);
         // Remove trailing newline character
         command[strcspn(command, "\n")] = 0;
 
