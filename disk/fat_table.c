@@ -20,15 +20,21 @@ void write_fat_table(void){
   write_block((char*)fat+BLOCK_SIZE*3, 4);
   }
 }
+
 void read_fat_table(void){
   if (fat) free(fat);
   fat = (int*)malloc(BLOCK_SIZE*sizeof(int));
-  for(int i =1; i <=4 ; i++){
+  for (int i = 1; i < 5; i++){
     const char * block = read_block(i);
-    for(int j = 0; j < BLOCK_SIZE; j++){
-      fat[(i-1)*BLOCK_SIZE+j] = block[j];
+    // Temporary integer array to hold the data from the block
+    int temp[BLOCK_SIZE / sizeof(int)]; 
+    memcpy(temp, block, BLOCK_SIZE);
+    free(block);
+    
+    // Copy data from temporary array into fat
+    for(int j = 0; j < BLOCK_SIZE / sizeof(int); j++){
+      fat[(i-1)*BLOCK_SIZE/sizeof(int)+j] = temp[j];
     }
-    free((void*)block);
   }
 }
 #ifdef DEBUG
@@ -51,13 +57,15 @@ int get_free_block(void){
   }
   return -1;
 }
-int get_value(int index){
+// get the value of the block at index
+int get_fat_value(int index){
   if (index < 0 || index >= BLOCK_SIZE) return -1;
   return fat[index];
 }
 void set_value(int index, int value){
   if (index < 0 || index >= BLOCK_SIZE) return;
   fat[index] = value;
+  write_fat_table();
 }
 int get_free_space(void){
   int i;

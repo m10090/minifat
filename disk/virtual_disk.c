@@ -3,13 +3,15 @@
 FILE* disk = NULL;
 void init_disk(void) {
     // Initialize the virtual disk
-    disk = fopen("Disk.txt", "wb+");
+    disk = fopen(DISK_PATH, "rb+");
     if (disk == NULL) {
         printf("Error: Could not create or read virtual disk\n");
+        disk = fopen(DISK_PATH, "wb+");
         exit(1);
     }
-    fseek(disk, 0, SEEK_SET);
-    long size = ftell(disk);
+    fseek(disk, 0L, SEEK_END);
+    long int size = ftell(disk);
+    fseek(disk, 0L, SEEK_SET);
     if (size == 0) {
         // Initialize the disk to 1MB of 0s
         int i;
@@ -23,13 +25,20 @@ void init_disk(void) {
         }
         // the data block
         for (;i< 1024*1024; i++) {
-            fwrite("#", 1, 1, disk);
+            fwrite("\0", 1, 1, disk);
         }
+        init_fat();
         fclose(disk);
-         init_fat();
-        disk = fopen("Disk.txt", "wb+");
     }
-    fclose(disk);
+    else{
+      fclose(disk);
+      read_fat_table();
+      #ifdef DEBUG
+      printf("reading fat table\n");
+      #endif
+    }
+ 
+  
 }
 void write_block(char* buffer, int block_number) {
     disk = fopen(DISK_PATH, "rb+");
