@@ -1,4 +1,4 @@
 #!/bin/zsh
-clang -o test test.c -DDEBUG
-./test
+sudo clang -o test test.c -DDEBUG
+sudo ./test
 
