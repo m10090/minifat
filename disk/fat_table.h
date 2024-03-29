@@ -1,4 +1,4 @@
-void init_fat(void);
+void init_fat(int file_exists);
 void write_fat_table(void);
 void read_fat_table(void);
 int get_available_block(void);

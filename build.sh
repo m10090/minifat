@@ -2,7 +2,7 @@
 
 build() {
     if [ "$1" == "DEBUG" ]; then
-        clang -o main main.c -DDEBUG
+        clang -o main main.c -DDEBUG --debug
         ./main
         return
     fi

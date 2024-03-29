@@ -1,5 +1,9 @@
+#ifndef DISK_H
+#define DISK_H
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BLOCK_SIZE 1024 
 
@@ -17,3 +21,4 @@ extern int *fat;
 #include "fat_table.h"
 #include "virtual_disk.c"
 #include "fat_table.c"
+#endif // !DISK_H

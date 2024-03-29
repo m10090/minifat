@@ -1,9 +1,11 @@
+#include "disk.h" // for the linter this is useless
 int *fat = NULL;
-void init_fat(void) {
-  fat = (int*)malloc(BLOCK_SIZE*sizeof(int));
+void init_fat(int file_exists) {
+  fat = (int*)calloc(BLOCK_SIZE,sizeof(int));
   int i;
-  for (i = 0; i < BLOCK_SIZE; i++) {
-    fat[i] = 0;
+  if (file_exists){
+    read_fat_table();
+    return;
   }
   fat[0] = -1;
   fat[1] = 2;
@@ -29,7 +31,7 @@ void read_fat_table(void){
     // Temporary integer array to hold the data from the block
     int temp[BLOCK_SIZE / sizeof(int)]; 
     memcpy(temp, block, BLOCK_SIZE);
-    free(block);
+    free((void *)block);
     
     // Copy data from temporary array into fat
     for(int j = 0; j < BLOCK_SIZE / sizeof(int); j++){

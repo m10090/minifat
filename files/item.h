@@ -1,3 +1,5 @@
+#ifndef ITEM_H
+#define ITEM_H
 typedef  struct  Item {
   char name[11];
   // it should be empty
@@ -7,3 +9,4 @@ typedef  struct  Item {
   int size;
   int frist_cluster;
 }  Item;
+#endif // !ITEM_H

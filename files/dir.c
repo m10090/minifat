@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dir.h"
-#include "../disk/disk.h"
-
+Dir* current_dir = NULL;
+// initialize the current directory
 void dir_init(void) {
   current_dir = (Dir *) malloc(sizeof(Dir));
   // memcpy(current_dir, (Dir*){{"root",{0},2,2,5},NULL,0,0,NULL}, sizeof(Dir));
@@ -12,7 +11,8 @@ void dir_init(void) {
   current_dir->parent = current_dir;
   current_dir->dir_list = read_dir(5);
 }
-int get_size_of_list(Item* childrens,int right){
+// get the number of children in the directory
+int get_n_children(Item* childrens,int right){
   // find the index of the empty file (file that have a attrubute of 0) 
     int left = 0;
     while (left <= right) {
@@ -25,6 +25,7 @@ int get_size_of_list(Item* childrens,int right){
     }
     return left;
 }
+// read the content of the directory from the disk
 DirList read_dir(int index) {
   int np = index;
   if (np == 0) np = get_free_block();
@@ -45,7 +46,7 @@ DirList read_dir(int index) {
     }
     free(childrens);
   } 
-  n_children =  get_size_of_list(items,array_size-1);
+  n_children =  get_n_children(items,array_size-1);
   #ifdef DEBUG
     printf("Reading dir %d\n", index);
     printf("Array size %d\n", array_size );
@@ -58,7 +59,7 @@ void write_dir(void) {
   int nc = 0;
   for (int i = 0; i < current_dir->dir_list.array_size; i += BLOCK_SIZE / sizeof(Item)) {
     printf("Writing block %d %d\n", np,i);
-    write_block((unsigned char*)(current_dir->dir_list.childrens + i), np);
+    write_block((char*)(current_dir->dir_list.childrens + i), np);
     nc = np;
     np = get_fat_value(np);
     if (np == 0) {
@@ -124,7 +125,9 @@ void delete_dir(int index) {
     set_value(nc, 0);
   }
 }
+// change the current directory to the given name
 void change_dir(char* name) {
+  // if the name is ".." go back to the parent directory
   if (strcmp(name, "..") == 0) {
     if (current_dir->parent == NULL) {
       printf("Can't go back\n");
@@ -148,6 +151,7 @@ void change_dir(char* name) {
     printf("Not a directory\n");
   }
 }
+// add a directory to the current directory
 void make_dir(char* name) {
   if (dir_search(name) != -1) {
     printf("Directory already exists\n");
@@ -160,9 +164,35 @@ void make_dir(char* name) {
   write_dir();
   current_dir->dir_list = read_dir(current_dir->dir.frist_cluster);
 }
+// free the current directory (from memory) and go back to the parent directory
 void free_dir(void){
   Dir* parent = current_dir->parent;
   free(current_dir->dir_list.childrens);
   free(current_dir);
   current_dir = parent;
+}
+// deep copy the given current directory to the new directory 
+// and set the current directory to the new directory
+Dir* copy_dir(Dir* new_dir, Dir* old_dir) {
+  Dir* parents = NULL;
+  if (old_dir->parent != NULL) {
+    parents = copy_dir(new_dir->parent, old_dir->parent);
+  }
+  // copy the current directory
+  new_dir->dir = old_dir->dir;
+  new_dir->parent = parents;
+  DirList dir_list = old_dir->dir_list;
+  // copy the childrens of the current directory
+  dir_list.childrens = (Item*)malloc(dir_list.array_size * sizeof(Item));
+  dir_list.array_size = old_dir->dir_list.array_size;
+  dir_list.n_children = old_dir->dir_list.n_children;
+  memcpy(dir_list.childrens, old_dir->dir_list.childrens, dir_list.array_size * sizeof(Item));
+  new_dir->dir_list = dir_list; 
+  return new_dir;
+}
+// free the current directory with its parents
+void free_current_dir(void) {
+  while (current_dir != NULL) {
+    free_dir();
+  }
 }

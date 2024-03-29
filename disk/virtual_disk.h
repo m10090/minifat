@@ -1,6 +1,5 @@
 
-void init_disk();
-
+void disk_init();
 // Function to write a block to the virtual disk
 void write_block(char* buffer, int block_number);
 
