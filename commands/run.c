@@ -1,38 +1,67 @@
+#include "commands.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "commands.h"
 #include <string.h>
 
-
-
-// return the last index in the command string 
+// return the last index in the command string
 void runCommand(char *command) {
   // get the index of the first space
   char *token = strtok(command, " ");
   if (token == NULL) {
-    printf("This is a simple interactive shell. The following commands are supported:\n");
-    printf("  cls: clear the screen\n");
-    printf("  exit: exit the shell\n");
-    printf("  help: display this help message\n");
-    return;
+    help(NULL);
   }
-  #ifdef DEBUG
-    printf("command: %s\n", command);
-  #endif
-    if (!strcmp(token, "cls")) {
-      system("clear");
-      return;
-    }
-    else if (!strncmp(token, "exit",4)) {
-      printf("Exiting the interactive shell. Goodbye!\n");
-      exit(0);
-    }
-    else if (!strncmp(token, "help",4)) {
+#ifdef DEBUG
+  printf("command: %s\n", command);
+#endif
+  if (!strcmp(token, "cls")) {
+    system("clear");
+    return;
+  } else if (!strcmp(token, "exit")) {
+    printf("Exiting the interactive shell. Goodbye!\n");
+    exit(0);
+  } else if (!strcmp(token, "help")) {
+    help(token);
+  } else if (!strcmp(token, "md")) {
+    if (md())
+      printf("error Directory created\n");
+  } else if (!strcmp(token, "rd")) {
+    if (rd())
+      printf("error Directory removed\n");
+  } else if (!strcmp(token, "cd")) {
+    token = strtok(NULL, " ");
+    cd(token);
+  } else if (!strcmp(token, "dir")) {
+    token = strtok(NULL, " ");
+    if (dir(token))
+      printf("error Directory not found\n");
+  } else if (!strcmp(token, "export")) {
+    while (token != NULL) {
       token = strtok(NULL, " ");
-      help(token);
+      export_files(token);
     }
-    else {
-      printf("Executing command: %s\n", command);
+  } else if (!strcmp(token, "import")) {
+    while (token != NULL) {
+      token = strtok(NULL, " ");
+      import_files(token);
     }
+  } else if(!strcmp(token, "rename")){
+    // rename_file();
+  } else if(!strcmp(token, "del")){
+    // delete files
+    // delete_file();
+  } else if(!strcmp(token,"type")){
+    // cat the file
+    //
+  } else if(!strcmp(token,"copy")){
+    // copy file 
+  }
+#ifdef DEBUG
+  else if (!strcmp(token, "pfat")) {
+    print_fat_table();
+  }
+#endif /* ifdef DEBUG */
+  else {
+    printf("Command not found: %s\n", token);
+  }
 }
 // main entriy point for processing commands

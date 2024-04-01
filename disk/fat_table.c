@@ -59,7 +59,7 @@ int get_free_block(void){
   }
   return -1;
 }
-// get the value of the block at index
+// get the value of the fat at index
 int get_fat_value(int index){
   if (index < 0 || index >= BLOCK_SIZE) return -1;
   return fat[index];

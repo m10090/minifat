@@ -7,9 +7,10 @@
 int main() {
   disk_init();
   dir_init();
+  write_dir();
   char command[MAX_COMMAND_LENGTH];
   while (1) {
-    printf("Enter a command (type 'exit' to quit): ");
+    printf("%s>", current_dir->path);
     fgets(command, sizeof(command), stdin);
     fflush(stdin);
     // Remove trailing newline character
