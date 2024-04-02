@@ -18,7 +18,7 @@ typedef struct currentDir {
   Item dir;
   struct currentDir *parent;
   DirList dir_list;
-  char *path;
+  char path[100];
 } currentDir;
 extern currentDir *current_dir;
 #include "dir.h"

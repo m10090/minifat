@@ -9,8 +9,6 @@ void dir_init(void) {
   current_dir->dir = (Item){"root", {0}, 2, 2, 5};
   current_dir->parent = NULL;
   current_dir->dir_list = read_dir(5);
-  current_dir->path = malloc(100);
-  int _ = strcmp(current_dir->path, "root/");
 }
 // get the number of children in the directory
 int get_n_children(Item *childrens, int right) {
@@ -179,9 +177,9 @@ void change_dir(char *name) {
     current_dir->dir = dir;
     current_dir->parent = parent;
     current_dir->dir_list = dir_list;
-    current_dir->path = malloc(100);
 
-    int _ = strcmp(current_dir->path, parent->path);
+    strcpy(current_dir->path, parent->path);
+    strcat(current_dir->path, "/");
     strcat(current_dir->path, name);
 
 #ifdef DEBUG
@@ -209,7 +207,6 @@ void make_dir(char *name) {
 void free_dir(void) {
   currentDir *parent = current_dir->parent;
   free(current_dir->dir_list.childrens);
-  free(current_dir->path);
   free(current_dir);
   current_dir = parent;
 }
