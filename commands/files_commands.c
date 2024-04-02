@@ -32,3 +32,7 @@ int catfile(char *name) {
   free(buffer);
   return 0;
 }
+int copyfile(char *name){
+  
+  return 0;
+}

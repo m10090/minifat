@@ -9,7 +9,7 @@ int import_files(char *name) {
     return 1;
   }
   file = fopen(name, "r+b");
-  if(file == NULL){
+  if (file == NULL) {
     printf("File not found\n");
     return 1;
   }
@@ -20,11 +20,11 @@ int import_files(char *name) {
   int nc = 0;
   int np = get_free_block();
   int start_block = np;
-  for (int i = 0; i < file_size; i += 1024) {
-    char buffer[1024];
-    memset(buffer, 0, 1024);
-    fread(buffer, 1, min(1024, file_size - i), file);
-    fseek(file, 1024, SEEK_CUR);
+  for (int i = 0; i < file_size; i += BLOCK_SIZE) {
+    char buffer[BLOCK_SIZE];
+    memset(buffer, 0, BLOCK_SIZE);
+    fread(buffer, 1, min(BLOCK_SIZE, file_size - i), file);
+    fseek(file, BLOCK_SIZE, SEEK_CUR);
 #ifdef DEBUG
     printf("buffer %s\n", buffer);
 #endif /* DEBUG */
@@ -36,7 +36,10 @@ int import_files(char *name) {
     np = get_free_block(); // if got and not used it will not be written in the
                            // fat table
   }
-  Item to_add = (Item){.name="", .empty = {0}, .attribute = 1, .size = file_size,
+  Item to_add = (Item){.name = "",
+                       .empty = {0},
+                       .attribute = 1,
+                       .size = file_size,
                        .frist_cluster = start_block};
   strcpy(to_add.name, name);
   set_value(nc, -1);
@@ -65,6 +68,7 @@ int export_files(char *name) {
   free(buffer);
   return 0;
 }
+
 // read the file gets memory from heap
 char *read_file(int frist_cluster) {
   int np = frist_cluster;
@@ -79,4 +83,31 @@ char *read_file(int frist_cluster) {
     np = get_fat_value(np);
   }
   return result;
+}
+int import_buffer(char *buffer, int buffer_size, int file_size, char *name) {
+  int nc = 0;
+  int np = get_free_block();
+  int start_block = np;
+  for (int i = 0; i < buffer_size; i += BLOCK_SIZE) {
+#ifdef DEBUG
+    printf("buffer %s\n", buffer);
+#endif /* DEBUG */
+    write_block(buffer + i, np);
+    if (nc != 0) {
+      set_value(nc, np);
+    }
+    nc = np;
+    np = get_free_block(); // if got and not used it will not be written in the
+                           // fat table
+  }
+  Item to_add = (Item){.name = "",
+                       .empty = {0},
+                       .attribute = 1,
+                       .size = file_size,
+                       .frist_cluster = start_block};
+  strcpy(to_add.name, name);
+  set_value(nc, -1);
+  add_to_dir(to_add);
+  write_dir();
+  return 0;
 }

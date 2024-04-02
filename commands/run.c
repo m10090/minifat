@@ -56,7 +56,10 @@ void runCommand(char *command) {
     rename_file(filename, newname);
   } else if (!strcmp(token, "del")) {
     token = strtok(NULL, " ");
-    delete_file(token);
+    while(token != NULL) {
+      delete_file(token);
+      token = strtok(NULL, " ");
+    }
   } else if (!strcmp(token, "type")) {
     // cat the file
     token = strtok(NULL, " ");
