@@ -35,14 +35,16 @@ void runCommand(char *command) {
     if (dir(token))
       printf("error Directory not found\n");
   } else if (!strcmp(token, "export")) {
+    token = strtok(NULL, " ");
     while (token != NULL) {
-      token = strtok(NULL, " ");
       export_files(token);
+      token = strtok(NULL, " ");
     }
   } else if (!strcmp(token, "import")) {
+    token = strtok(NULL, " ");
     while (token != NULL) {
-      token = strtok(NULL, " ");
       import_files(token);
+      token = strtok(NULL, " ");
     }
   } else if (!strcmp(token, "rename")) {
     char *filename = strtok(NULL, " ");
@@ -57,7 +59,8 @@ void runCommand(char *command) {
     delete_file(token);
   } else if (!strcmp(token, "type")) {
     // cat the file
-    //
+    token = strtok(NULL, " ");
+    catfile(token);
   } else if (!strcmp(token, "copy")) {
     // copy file
   }

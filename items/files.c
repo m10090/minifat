@@ -52,10 +52,10 @@ int export_files(char *name) {
     return 1;
   }
   file = fopen(name, "w+b");
-  int file_size;
   const Item *childrens = current_dir->dir_list.childrens;
-  int frist_cluster = childrens[file_idx].frist_cluster;
-  char *buffer = read_file(frist_cluster, &file_size);
+  const int frist_cluster = childrens[file_idx].frist_cluster;
+  const int file_size = childrens[file_idx].size;
+  char *buffer = read_file(frist_cluster);
 #ifdef DEBUG
   printf("frist cluster of file %d\n", frist_cluster);
   printf("file size %d\n", file_size);
@@ -65,7 +65,8 @@ int export_files(char *name) {
   free(buffer);
   return 0;
 }
-char *read_file(int frist_cluster, int *file_size) {
+// read the file gets memory from heap
+char *read_file(int frist_cluster) {
   int np = frist_cluster;
   char *result = NULL;
   int result_size = 0;
@@ -77,6 +78,5 @@ char *read_file(int frist_cluster, int *file_size) {
     result_size += BLOCK_SIZE;
     np = get_fat_value(np);
   }
-  *file_size = result_size;
   return result;
 }
