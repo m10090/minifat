@@ -46,19 +46,15 @@ void runCommand(char *command) {
     }
   } else if (!strcmp(token, "rename")) {
     char *filename = strtok(NULL, " ");
-    if (filename == NULL) {
-      printf("needs arguments");
-      return ;
-    }
     char *newname = strtok(NULL, " ");
-    if (newname == NULL) {
-      printf("needs arguments");
-      return ;
+    if (newname == NULL) { // if filename is null then newname will also be null
+      printf("needs arguments\n");
+      return;
     }
     rename_file(filename, newname);
   } else if (!strcmp(token, "del")) {
-    // delete files
-    // delete_file();
+    token = strtok(NULL, " ");
+    delete_file(token);
   } else if (!strcmp(token, "type")) {
     // cat the file
     //
