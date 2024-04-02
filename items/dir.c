@@ -177,11 +177,9 @@ void change_dir(char *name) {
     current_dir->dir = dir;
     current_dir->parent = parent;
     current_dir->dir_list = dir_list;
-
     strcpy(current_dir->path, parent->path);
     strcat(current_dir->path, "/");
     strcat(current_dir->path, name);
-
 #ifdef DEBUG
     printf("frist_cluster %d\n", dir.frist_cluster);
     for (int i = 0; i < current_dir->dir_list.n_children; i++) {

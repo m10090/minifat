@@ -1,0 +1,11 @@
+# Ignore Disk.txt from all folders
+**/Disk.txt
+
+# Ignore test directory, but not test.c
+test
+!test.c
+
+# Ignore main directory, but not main.c
+main
+!main.c
+

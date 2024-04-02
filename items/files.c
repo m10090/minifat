@@ -84,11 +84,11 @@ char *read_file(int frist_cluster) {
   }
   return result;
 }
-int import_buffer(char *buffer, int buffer_size, int file_size, char *name) {
+int import_buffer(char *buffer, int file_size, char *name) {
   int nc = 0;
   int np = get_free_block();
   int start_block = np;
-  for (int i = 0; i < buffer_size; i += BLOCK_SIZE) {
+  for (int i = 0; i < file_size; i += BLOCK_SIZE) {
 #ifdef DEBUG
     printf("buffer %s\n", buffer);
 #endif /* DEBUG */

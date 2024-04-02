@@ -53,19 +53,27 @@ void runCommand(char *command) {
       printf("needs arguments\n");
       return;
     }
-    rename_file(filename, newname);
+    renameFile(filename, newname);
   } else if (!strcmp(token, "del")) {
     token = strtok(NULL, " ");
-    while(token != NULL) {
-      delete_file(token);
+    while (token != NULL) {
+      deleteFile(token);
       token = strtok(NULL, " ");
     }
   } else if (!strcmp(token, "type")) {
     // cat the file
     token = strtok(NULL, " ");
-    catfile(token);
+    catFile(token);
   } else if (!strcmp(token, "copy")) {
     // copy file
+    char *name = strtok(NULL, " ");
+    char *path = strtok(NULL, " ");
+    char *newName = strtok(NULL, " ");
+    if (newName == NULL) {
+      printf("needs arguments");
+      return;
+    }
+    copyFile(name, path, newName);
   }
 #ifdef DEBUG
   else if (!strcmp(token, "pfat")) {
