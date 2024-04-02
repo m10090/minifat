@@ -8,7 +8,7 @@ void runCommand(char *command) {
   // get the index of the first space
   char *token = strtok(command, " ");
   if (token == NULL) {
-    help(NULL);
+    help();
   }
 #ifdef DEBUG
   printf("command: %s\n", command);
@@ -20,7 +20,7 @@ void runCommand(char *command) {
     printf("Exiting the interactive shell. Goodbye!\n");
     exit(0);
   } else if (!strcmp(token, "help")) {
-    help(token);
+    help();
   } else if (!strcmp(token, "md")) {
     if (md())
       printf("error Directory created\n");
@@ -44,16 +44,26 @@ void runCommand(char *command) {
       token = strtok(NULL, " ");
       import_files(token);
     }
-  } else if(!strcmp(token, "rename")){
-    // rename_file();
-  } else if(!strcmp(token, "del")){
+  } else if (!strcmp(token, "rename")) {
+    char *filename = strtok(NULL, " ");
+    if (filename == NULL) {
+      printf("needs arguments");
+      return ;
+    }
+    char *newname = strtok(NULL, " ");
+    if (newname == NULL) {
+      printf("needs arguments");
+      return ;
+    }
+    rename_file(filename, newname);
+  } else if (!strcmp(token, "del")) {
     // delete files
     // delete_file();
-  } else if(!strcmp(token,"type")){
+  } else if (!strcmp(token, "type")) {
     // cat the file
     //
-  } else if(!strcmp(token,"copy")){
-    // copy file 
+  } else if (!strcmp(token, "copy")) {
+    // copy file
   }
 #ifdef DEBUG
   else if (!strcmp(token, "pfat")) {

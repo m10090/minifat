@@ -7,13 +7,17 @@ int md() {
     printf("md: missing operand\n");
     return 1;
   }
-  printf("hi $%s$\n", paths);
   do {
     char *name = malloc(11);
     strncpy(name, paths, 11);
     // check if the directory name cotains a '/'
-    if (strchr(name, '/') != NULL || dir_search(name) != -1) {
-      printf("md: cannot create directory '%s': file or directory exist\n",
+    if (strchr(name, '/') != NULL) {
+      printf("md :cannot create directory recursive path");
+      return 1;
+
+    }
+    if (dir_search(name) != -1) {
+      printf("md: cannot create directory '%s': directory exist\n",
              name);
       printf("%s\n", name);
       return 1;
@@ -41,7 +45,7 @@ int rd() {
     // remove the directory
     char *name = malloc(11);
     strncpy(name, paths, 11);
-    delete_dir(dir_search(name));
+    delete_item(dir_search(name));
     write_dir();
     free(name);
     paths =  strtok(NULL, " ");

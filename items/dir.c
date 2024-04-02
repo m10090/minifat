@@ -133,7 +133,8 @@ void add_to_dir(Item item) {
   // Add the new item to the array
   current_dir->dir_list.childrens[current_dir->dir_list.n_children++] = item;
 }
-void delete_dir(int index) {
+// delete both dir and file
+void delete_item(int index) {
   if (index < 0)
     return;
   Item deleted = current_dir->dir_list.childrens[index];
