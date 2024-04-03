@@ -8,7 +8,7 @@ void runCommand(char *command) {
   // get the index of the first space
   char *token = strtok(command, " ");
   if (token == NULL) {
-    help();
+    return ;
   }
 #ifdef DEBUG
   printf("command: %s\n", command);
@@ -65,6 +65,10 @@ void runCommand(char *command) {
   } else if (!strcmp(token, "type")) {
     // cat the file
     token = strtok(NULL, " ");
+    if(token == NULL){
+      printf("needs arguments\n");
+      return;
+    }
     catFile(token);
   } else if (!strcmp(token, "copy")) {
     // copy file
@@ -72,7 +76,7 @@ void runCommand(char *command) {
     char *path = strtok(NULL, " ");
     char *newName = strtok(NULL, " ");
     if (newName == NULL) {
-      printf("needs arguments");
+      printf("needs arguments\n");
       return;
     }
     copyFile(name, path, newName);

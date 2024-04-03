@@ -8,7 +8,7 @@ int md() {
     return 1;
   }
   do {
-    char *name = malloc(11);
+    char name[11] ;
     strncpy(name, paths, 11);
     // check if the directory name cotains a '/'
     if (strchr(name, '/') != NULL) {
@@ -24,7 +24,6 @@ int md() {
     }
     // create the directory
     make_dir(name);
-    free(name);
     paths=  strtok(NULL, " ");
   } while (paths != NULL);
   return 0;

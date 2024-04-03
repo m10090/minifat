@@ -44,7 +44,7 @@ DirList read_dir(int index) {
       set_value(nc, -1);
       np = -1;
     }
-    free((void *)childrens);
+    free(childrens);
   }
   int n_children = get_n_children(items, array_size - 1);
 #ifdef DEBUG
@@ -172,7 +172,6 @@ void change_dir(char *name) {
     printf("Directory not found\n");
     return;
   }
-  {
     currentDir *parent = current_dir;
     Item dir = current_dir->dir_list.childrens[index];
     DirList dir_list = read_dir(dir.frist_cluster);
@@ -190,7 +189,6 @@ void change_dir(char *name) {
     }
     printf("\n");
 #endif /* ifdef DEBUG */
-  }
 }
 // add a directory to the current directory
 void make_dir(char *name) {

@@ -53,7 +53,6 @@ int get_free_block(void){
   int i;
   for (i = 0; i < BLOCK_SIZE; i++) {
     if (fat[i] == 0) {
-      fat[i] = -1;
       return i;
     }
   }
