@@ -18,6 +18,8 @@ void runCommand(char *command) {
     return;
   } else if (!strcmp(token, "exit")) {
     printf("Exiting the interactive shell. Goodbye!\n");
+    free_current_dir();
+    free(fat);
     exit(0);
   } else if (!strcmp(token, "help")) {
     help();

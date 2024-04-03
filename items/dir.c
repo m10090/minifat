@@ -69,7 +69,10 @@ void write_dir(void) {
   int nc = 0;
   for (int i = 0; i < current_dir->dir_list.array_size;
        i += BLOCK_SIZE / sizeof(Item)) {
+#ifdef DEBUG
+
     printf("Writing block %d %d\n", np, i);
+#endif /* ifdef DEBUG */
     write_block((char *)(current_dir->dir_list.childrens + i), np);
     nc = np;
     np = get_fat_value(np);
@@ -185,6 +188,7 @@ void change_dir(char *name) {
     for (int i = 0; i < current_dir->dir_list.n_children; i++) {
       printf("%s ", current_dir->dir_list.childrens[i].name);
     }
+    printf("\n");
 #endif /* ifdef DEBUG */
   }
 }

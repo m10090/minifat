@@ -11,12 +11,13 @@ int renameFile(char *filename, char *newName) {
   return 0;
 }
 int deleteFile(char *name) {
-  int file_idx;
-  if ((file_idx = file_search(name)) == -1) {
+  int file_idx = file_search(name);
+  if (file_idx  == -1) {
     printf("file not found\n");
     return 1;
   }
   delete_item(file_idx);
+  write_dir();
   return 0;
 }
 int catFile(char *name) {
@@ -50,8 +51,8 @@ int copyFile(char *name, char *copyPath, char *newName) {
     copyPath = strtok(NULL, "/");
   }
   import_buffer(file_content, file_size, newName);
-
-  free_dir();
+  free(file_content);
+  free_current_dir();
   dir_init();
   copyPath = strtok(current_dir_path,"/");
   while (copyPath != NULL) {
