@@ -1,4 +1,5 @@
-#include "../cli.h"
+#include <string.h>
+#include <stdio.h>
 
 void help() {
   char *token = strtok(NULL, " ");
@@ -8,16 +9,38 @@ void help() {
     printf("  cls: clear the screen\n");
     printf("  exit: exit the shell\n");
     printf("  help: display this help message\n");
+    printf("  copy: copy a file\n");
+    printf("  delete: delete files\n");
+    printf("  rd: remove directory\n");
+    printf("  md: make directory\n");
+    printf("  cd: change directory\n");
+    printf("  dir: list directory\n");
+    printf("  type: display the contents of a file\n");
+    printf("  rename: rename a file\n");
   } else if (!strcmp(token, "cls")) {
     printf("cls: clear the screen\n");
   } else if (!strcmp(token, "exit")) {
     printf("exit: exit the shell\n");
   } else if (!strcmp(token, "help")) {
     printf("help: display this help message\n");
-  } else if (!strcmp(token,"")) {
-  
-  }
-  else {
+  } else if (!strcmp(token, "copy")) {
+    printf("copy: copy a file\n");
+    printf("Usage: copy <source> <destination> <new name>\n");
+  } else if (!strcmp(token, "delete")) {
+    printf("delete: delete files\n");
+  } else if (!strcmp(token, "rd")) {
+    printf("rd: remove directory\n");
+  } else if (!strcmp(token, "md")) {
+    printf("md: make directory\n");
+  } else if (!strcmp(token, "cd")) {
+    printf("cd: change directory\n");
+  } else if (!strcmp(token, "dir")) {
+    printf("dir: list directory\n");
+  } else if (!strcmp(token, "type")) {
+    printf("type: display the contents of a file\n");
+  } else if (!strcmp(token, "rename")) {
+    printf("rename: rename a file\n");
+  } else {
     printf("Command not found: %s\n", token);
   }
 }
