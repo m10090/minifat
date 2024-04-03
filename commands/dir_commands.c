@@ -2,34 +2,32 @@
 #include <stdio.h>
 #include <string.h>
 int md() {
-  char* paths = strtok(NULL, " ");
+  char *paths = strtok(NULL, " ");
   if (paths == NULL) {
     printf("md: missing operand\n");
     return 1;
   }
   do {
-    char name[11] ;
+    char name[11];
     strncpy(name, paths, 11);
     // check if the directory name cotains a '/'
     if (strchr(name, '/') != NULL) {
       printf("md :cannot create directory recursive path");
       return 1;
-
     }
     if (dir_search(name) != -1) {
-      printf("md: cannot create directory '%s': directory exist\n",
-             name);
+      printf("md: cannot create directory '%s': directory exist\n", name);
       printf("%s\n", name);
       return 1;
     }
     // create the directory
     make_dir(name);
-    paths=  strtok(NULL, " ");
+    paths = strtok(NULL, " ");
   } while (paths != NULL);
   return 0;
 }
 int rd() {
-  char* paths = strtok(NULL, " ");
+  char *paths = strtok(NULL, " ");
   if (paths == NULL) {
     printf("rd: missing operand\n");
     return 1;
@@ -47,11 +45,11 @@ int rd() {
     delete_item(dir_search(name));
     write_dir();
     free(name);
-    paths =  strtok(NULL, " ");
-  } 
+    paths = strtok(NULL, " ");
+  }
   return 0;
 }
-int cd(char* paths) {
+int cd(char *paths) {
   if (paths == NULL) {
     printf("cd: missing operand\n");
     return 1;
@@ -79,4 +77,31 @@ int dir(char *paths) {
   printf("\n");
   return 0;
 }
-
+int movDir(char *name, char *path, char *newName) {
+  int dir_idx = dir_search(name);
+  if (dir_idx == -1) {
+    printf("mvdir: cannot move directory '%s': No such file or directory\n",
+           name);
+    return 1;
+  }
+  Item dir = current_dir->dir_list.childrens[dir_idx];
+  delete_item(dir_idx);
+  write_dir();
+  char current_dir_path[100];
+  strcpy(current_dir_path, current_dir->path);
+  path = strtok(path, "/");
+  while (path != NULL){
+    change_dir(path);
+    path = strtok(NULL, "/");
+  }
+  add_to_dir(dir);
+  write_dir();
+  free_current_dir();
+  dir_init();
+  path = strtok(current_dir_path, "/");
+  while (path != NULL) {
+    change_dir(path);
+    path = strtok(NULL, "/");
+  }
+  return 0;
+}

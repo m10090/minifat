@@ -17,6 +17,7 @@ void help() {
     printf("  dir: list directory\n");
     printf("  type: display the contents of a file\n");
     printf("  rename: rename a file\n");
+    printf("  mvd: move directory\n");
   } else if (!strcmp(token, "cls")) {
     printf("cls: clear the screen\n");
   } else if (!strcmp(token, "exit")) {
@@ -40,7 +41,11 @@ void help() {
     printf("type: display the contents of a file\n");
   } else if (!strcmp(token, "rename")) {
     printf("rename: rename a file\n");
-  } else {
+  } else if (!strcmp(token, "mvd")) {
+    printf("mvd: move directory\n");
+    printf("Usage: mv <source> <destination> <new name>\n");
+  }
+  else {
     printf("Command not found: %s\n", token);
   }
 }

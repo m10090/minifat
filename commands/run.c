@@ -80,7 +80,18 @@ void runCommand(char *command) {
       return;
     }
     copyFile(name, path, newName);
+  } else if (!strcmp(token, "mvd")) {
+    // move directory 
+    char *name = strtok(NULL, " ");
+    char *path = strtok(NULL, " ");
+    char *newName = strtok(NULL, " ");
+    if (newName== NULL) {
+      printf("needs arguments\n");
+      return;
+    }
+    movDir(name, path, newName);
   }
+
 #ifdef DEBUG
   else if (!strcmp(token, "pfat")) {
     print_fat_table();
