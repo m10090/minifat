@@ -23,14 +23,16 @@ int import_files(char *name) {
   for (int i = 0; i < file_size; i += BLOCK_SIZE) {
     char buffer[BLOCK_SIZE];
     memset(buffer, 0, BLOCK_SIZE);
+    fseek(file, i, SEEK_SET);
     fread(buffer, 1, min(BLOCK_SIZE, file_size - i), file);
-    fseek(file, BLOCK_SIZE, SEEK_CUR);
 #ifdef DEBUG
     printf("buffer %s\n", buffer);
 #endif /* DEBUG */
     write_block(buffer, np);
     if (nc != 0) {
       set_value(nc, np);
+    }else{
+      set_value(np, -1);// this is temp fix for the first block
     }
     nc = np;
     np = get_free_block(); // if got and not used it will not be written in the
@@ -95,6 +97,9 @@ int import_buffer(char *buffer, int file_size, char *name) {
     write_block(buffer + i, np);
     if (nc != 0) {
       set_value(nc, np);
+    }
+    else {
+      set_value(np,-1);
     }
     nc = np;
     np = get_free_block(); // if got and not used it will not be written in the

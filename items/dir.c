@@ -34,7 +34,7 @@ DirList read_dir(int index) {
   int nc = index;
   while (np != -1) {
     array_size += BLOCK_SIZE / sizeof(Item);
-    items = (Item *)reallocf(items, array_size * sizeof(Item));
+    items = (Item *)realloc(items, array_size * sizeof(Item));
     Item *childrens = (Item *)read_block(np);
     nc = np;
     np = get_fat_value(np);
@@ -119,13 +119,8 @@ void add_to_dir(Item item) {
         current_dir->dir_list.array_size + BLOCK_SIZE / sizeof(Item);
 
     // Resize the array
-    current_dir->dir_list.childrens = reallocf(current_dir->dir_list.childrens,
+    current_dir->dir_list.childrens = realloc(current_dir->dir_list.childrens,
                                                new_array_size * sizeof(Item));
-    if (current_dir->dir_list.childrens == NULL) {
-      // Handle realloc failure
-      fprintf(stderr, "Error: Memory reallocation failed\n");
-      exit(EXIT_FAILURE);
-    }
 
     // Update the array size
     current_dir->dir_list.array_size = new_array_size;
@@ -201,7 +196,6 @@ void make_dir(char *name) {
   strncpy(item.name, name, 11);
   add_to_dir(item);
   write_dir();
-  current_dir->dir_list = read_dir(current_dir->dir.frist_cluster);
 }
 // free the current directory (from memory) and go back to the parent directory
 void free_dir(void) {
