@@ -12,7 +12,7 @@ int renameFile(char *filename, char *newName) {
 }
 int deleteFile(char *name) {
   int file_idx = file_search(name);
-  if (file_idx  == -1) {
+  if (file_idx == -1) {
     printf("file not found\n");
     return 1;
   }
@@ -47,14 +47,23 @@ int copyFile(char *name, char *copyPath, char *newName) {
   strcpy(current_dir_path, current_dir->path);
   copyPath = strtok(copyPath, "/");
   while (copyPath != NULL) {
-    change_dir(copyPath);
+    if (change_dir(copyPath)) {
+      free_current_dir();
+      dir_init();
+      copyPath = strtok(current_dir_path, "/");
+      while (copyPath != NULL) {
+        change_dir(copyPath);
+        copyPath = strtok(NULL, "/");
+      }
+      return -1;
+    }
     copyPath = strtok(NULL, "/");
   }
   import_buffer(file_content, file_size, newName);
   free(file_content);
   free_current_dir();
   dir_init();
-  copyPath = strtok(current_dir_path,"/");
+  copyPath = strtok(current_dir_path, "/");
   while (copyPath != NULL) {
     change_dir(copyPath);
     copyPath = strtok(NULL, "/");

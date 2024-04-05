@@ -86,12 +86,24 @@ int movDir(char *name, char *path, char *newName) {
   }
   Item dir = current_dir->dir_list.childrens[dir_idx];
   delete_item(dir_idx);
+  strcpy(dir.name,newName);
   write_dir();
   char current_dir_path[100];
   strcpy(current_dir_path, current_dir->path);
   path = strtok(path, "/");
-  while (path != NULL){
-    change_dir(path);
+  while (path != NULL) {
+    if (change_dir(path)) {
+      free_current_dir();
+      dir_init();
+      path = strtok(current_dir_path, "/");
+      while (path != NULL) {
+        change_dir(path);
+        path = strtok(NULL, "/");
+      }
+      add_to_dir(dir);
+      write_dir();
+      return 1;
+    }
     path = strtok(NULL, "/");
   }
   add_to_dir(dir);

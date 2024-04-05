@@ -31,8 +31,8 @@ int import_files(char *name) {
     write_block(buffer, np);
     if (nc != 0) {
       set_value(nc, np);
-    }else{
-      set_value(np, -1);// this is temp fix for the first block
+    } else {
+      set_value(np, -1); // this is temp fix for the first block
     }
     nc = np;
     np = get_free_block(); // if got and not used it will not be written in the
@@ -56,7 +56,7 @@ int export_files(char *name) {
     printf("File not found\n");
     return 1;
   }
-  file = fopen(name, "w+b");
+  file = fopen(name, "r+b");
   const Item *childrens = current_dir->dir_list.childrens;
   const int frist_cluster = childrens[file_idx].frist_cluster;
   const int file_size = childrens[file_idx].size;
@@ -97,9 +97,8 @@ int import_buffer(char *buffer, int file_size, char *name) {
     write_block(buffer + i, np);
     if (nc != 0) {
       set_value(nc, np);
-    }
-    else {
-      set_value(np,-1);
+    } else {
+      set_value(np, -1);
     }
     nc = np;
     np = get_free_block(); // if got and not used it will not be written in the

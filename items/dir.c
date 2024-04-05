@@ -119,8 +119,8 @@ void add_to_dir(Item item) {
         current_dir->dir_list.array_size + BLOCK_SIZE / sizeof(Item);
 
     // Resize the array
-    current_dir->dir_list.childrens = realloc(current_dir->dir_list.childrens,
-                                               new_array_size * sizeof(Item));
+    current_dir->dir_list.childrens =
+        realloc(current_dir->dir_list.childrens, new_array_size * sizeof(Item));
 
     // Update the array size
     current_dir->dir_list.array_size = new_array_size;
@@ -150,40 +150,41 @@ void delete_item(int index) {
   }
 }
 // change the current directory to the given name
-void change_dir(char *name) {
+int change_dir(char *name) {
   // if the name is ".." go back to the parent directory
   if (strcmp(name, "..") == 0) {
     if (current_dir->parent == NULL) {
       printf("Can't go back\n");
-      return;
+      return 1;
     }
     free_dir();
     // current_dir->dir_list = read_dir(current_dir->dir.frist_cluster);
     // current_dir->dir = current_dir->dir;
-    return;
+    return 0;
   }
   int index = dir_search(name);
   if (index == -1) {
     printf("Directory not found\n");
-    return;
+    return 1;
   }
-    currentDir *parent = current_dir;
-    Item dir = current_dir->dir_list.childrens[index];
-    DirList dir_list = read_dir(dir.frist_cluster);
-    current_dir = (currentDir *)malloc(sizeof(currentDir));
-    current_dir->dir = dir;
-    current_dir->parent = parent;
-    current_dir->dir_list = dir_list;
-    strcpy(current_dir->path, parent->path);
-    strcat(current_dir->path, "/");
-    strcat(current_dir->path, name);
+  currentDir *parent = current_dir;
+  Item dir = current_dir->dir_list.childrens[index];
+  DirList dir_list = read_dir(dir.frist_cluster);
+  current_dir = (currentDir *)malloc(sizeof(currentDir));
+  current_dir->dir = dir;
+  current_dir->parent = parent;
+  current_dir->dir_list = dir_list;
+  strcpy(current_dir->path, parent->path);
+  strcat(current_dir->path, "/");
+  strcat(current_dir->path, name);
 #ifdef DEBUG
-    printf("frist_cluster %d\n", dir.frist_cluster);
-    for (int i = 0; i < current_dir->dir_list.n_children; i++) {
-      printf("%s ", current_dir->dir_list.childrens[i].name);
-    }
-    printf("\n");
+  printf("frist_cluster %d\n", dir.frist_cluster);
+  for (int i = 0; i < current_dir->dir_list.n_children; i++) {
+    printf("%s ", current_dir->dir_list.childrens[i].name);
+  }
+  printf("\n");
 #endif /* ifdef DEBUG */
+  return 0;
 }
 // add a directory to the current directory
 void make_dir(char *name) {
