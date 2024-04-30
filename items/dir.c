@@ -155,7 +155,7 @@ void delete_item(int index) {
 // change the current directory to the given name
 int change_dir(char *name) {
   // if the name is ".." go back to the parent directory
-  if (strcmp(name, "..") == 0) {
+  if (strncmp(name, "..",10) == 0) {
     if (current_dir->parent == NULL) {
       printf("Can't go back\n");
       return 1;
@@ -177,7 +177,7 @@ int change_dir(char *name) {
   current_dir->dir = dir;
   current_dir->parent = parent;
   current_dir->dir_list = dir_list;
-  strcpy(current_dir->path, parent->path);
+  strncpy(current_dir->path, parent->path,10);
   strcat(current_dir->path, "/");
   strcat(current_dir->path, name);
 #ifdef DEBUG

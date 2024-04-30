@@ -43,7 +43,7 @@ int import_files(char *name) {
                        .attribute = 1,
                        .size = file_size,
                        .frist_cluster = start_block};
-  strcpy(to_add.name, name);
+  strncpy(to_add.name, name,10);
   set_value(nc, -1);
   add_to_dir(to_add);
   write_dir();
@@ -110,7 +110,7 @@ int import_buffer(char *buffer, int file_size, char *name) {
                        .size = file_size,
                        .frist_cluster = start_block};
   // 
-  stpncpy(to_add.name, name,10);
+  strncpy(to_add.name, name,10);
   set_value(nc, -1);
   add_to_dir(to_add);
   write_dir();
