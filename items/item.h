@@ -3,7 +3,7 @@
 typedef  struct  Item {
   char name[11];
   // it should be empty
-  char empty[12];
+  char empty[11];
   // if a file 1, if a dir 2 if empty 0
   char attribute;
   int size;
@@ -21,6 +21,7 @@ typedef struct currentDir {
   char path[100];
 } currentDir;
 extern currentDir *current_dir;
-#include "dir.h"
-#include "files.h"
+#include "../disk/disk.h"
+#include "../disk/fat_table.h"
+#include "../disk/virtual_disk.h"
 #endif // !ITEM_H

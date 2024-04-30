@@ -1,3 +1,4 @@
+#include "../cli.h"
 #include "commands.h"
 #include <stdio.h>
 #include <stdlib.h>

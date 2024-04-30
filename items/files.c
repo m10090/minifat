@@ -1,6 +1,6 @@
 #include "files.h" // this is for linter
-#include "item.h"
 #include <stdio.h>
+#include <string.h>
 int min(int a, int b) { return (a > b) ? b : a; }
 int import_files(char *name) {
   FILE *file;
@@ -109,7 +109,8 @@ int import_buffer(char *buffer, int file_size, char *name) {
                        .attribute = 1,
                        .size = file_size,
                        .frist_cluster = start_block};
-  strcpy(to_add.name, name);
+  // 
+  stpncpy(to_add.name, name,10);
   set_value(nc, -1);
   add_to_dir(to_add);
   write_dir();

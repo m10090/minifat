@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 
-void help() {
+void help(void) {
   char *token = strtok(NULL, " ");
   if (token == NULL) {
     printf("This is a simple interactive shell. The following commands are "

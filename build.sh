@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/zsh
 
 build() {
-    if [ "$1" == "DEBUG" ]; then
+    if [ "$1" = "DEBUG" ]; then
         clang -g -o main main.c -DDEBUG --debug
         ./main
         return

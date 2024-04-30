@@ -6,7 +6,7 @@ currentDir *current_dir = NULL;
 // initialize the current directory
 void dir_init(void) {
   current_dir = (currentDir *)malloc(sizeof(currentDir));
-  current_dir->dir = (Item){"root", {0}, 2, 2, 5};
+  current_dir->dir = (Item){"root", {0}, 2, -2, 5};
   current_dir->parent = NULL;
   current_dir->dir_list = read_dir(5);
 }
@@ -93,8 +93,11 @@ void write_dir(void) {
 int dir_search(char *name) {
   const Item *childrens = current_dir->dir_list.childrens;
   const int n_children = current_dir->dir_list.n_children;
+  if (strncmp(name, ".", 11) == 0 || strncmp(name, "..", 11) == 0) {
+    return -1;
+  }
   for (int i = 0; i < n_children; i++) {
-    if ((strcmp(childrens[i].name, name) == 0) &&
+    if ((strncmp(childrens[i].name, name, 11) == 0) &&
         (childrens[i].attribute == 2)) {
       return i;
     }
@@ -105,7 +108,7 @@ int file_search(char *name) {
   Item *childrens = current_dir->dir_list.childrens;
   int n_children = current_dir->dir_list.n_children;
   for (int i = 0; i < n_children; i++) {
-    if ((strcmp(childrens[i].name, name) == 0) &&
+    if ((strncmp(childrens[i].name, name, 11) == 0) &&
         (childrens[i].attribute == 1)) {
       return i;
     }
@@ -194,7 +197,8 @@ void make_dir(char *name) {
   }
   // it gets a block number of 0 until it is made
   Item item = (Item){{0}, {0}, 2, 0, 0};
-  strncpy(item.name, name, 11);
+  strncpy(item.name, name, 10);
+  item.name[10] = '\0';
   add_to_dir(item);
   write_dir();
 }

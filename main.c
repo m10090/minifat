@@ -1,9 +1,8 @@
 #include "cli.h"
-#include "commands/run.c"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
+#include <stdio.h>
+#include <string.h>
+void runCommand(char* command);
 int main() {
   disk_init();
   dir_init();

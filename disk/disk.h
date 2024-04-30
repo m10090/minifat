@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "fat_table.h" 
+#include "virtual_disk.h"
+
 
 #define BLOCK_SIZE 1024 
 
@@ -15,10 +18,4 @@ extern FILE *disk;
 extern int *fat;
 
 
-
-
-#include "virtual_disk.h"
-#include "fat_table.h"
-#include "virtual_disk.c"
-#include "fat_table.c"
 #endif // !DISK_H

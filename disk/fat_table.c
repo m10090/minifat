@@ -1,4 +1,4 @@
-#include "disk.h" // for the linter this is useless
+#include "disk.h"
 int *fat = NULL;
 void init_fat(int file_exists) {
   fat = (int*)calloc(BLOCK_SIZE,sizeof(int));
