@@ -15,7 +15,7 @@
 // variables for this module
 extern FILE *disk;
 // fat table with the useage of each block
-extern int *fat;
+extern int fat[BLOCK_SIZE];
 
 
 #endif // !DISK_H

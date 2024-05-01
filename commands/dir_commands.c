@@ -40,11 +40,10 @@ int rd() {
       return 1;
     }
     // remove the directory
-    char *name = malloc(11);
-    strncpy(name, paths, 11);
-    delete_item(dir_search(name));
+    char name[11];
+    strncpy(name, paths, 10);
+    delete_dir(name);
     write_dir();
-    free(name);
     paths = strtok(NULL, " ");
   }
   return 0;
@@ -61,10 +60,9 @@ int cd(char *paths) {
     return 1;
   }
   // change the directory
-  char *name = malloc(11);
-  strncpy(name, paths, 11);
+  char name[11];
+  strncpy(name, paths, 10);
   change_dir(name);
-  free(name);
   return 0;
 }
 int dir(char *paths) {
@@ -86,10 +84,10 @@ int movDir(char *name, char *path, char *newName) {
   }
   Item dir = current_dir->dir_list.childrens[dir_idx];
   delete_item(dir_idx);
-  strncpy(dir.name,newName,10);
+  strncpy(dir.name, newName, 10);
   write_dir();
   char current_dir_path[100];
-  strncpy(current_dir_path, current_dir->path,10);
+  strncpy(current_dir_path, current_dir->path, 10);
   path = strtok(path, "/");
   while (path != NULL) {
     if (change_dir(path)) {

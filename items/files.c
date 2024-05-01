@@ -2,13 +2,30 @@
 #include <stdio.h>
 #include <string.h>
 int min(int a, int b) { return (a > b) ? b : a; }
+static char *expand_tilde(const char *path) {
+    if (path[0] == '~') {
+        const char *homeDir = getenv("HOME");
+        if (homeDir != NULL) {
+            size_t len = strlen(homeDir) + strlen(path) - 1; // -1 to exclude ~
+            char *expanded = (char *)malloc(len + 1); // +1 for null terminator
+            if (expanded != NULL) {
+                strcpy(expanded, homeDir);
+                strcat(expanded, path + 1); // Skip ~
+                return expanded;
+            }
+        }
+    }
+    return strdup(path); // No ~ found or memory allocation failed
+}
 int import_files(char *name) {
   FILE *file;
   if (file_search(name) != -1) {
     printf("File already exists rename it or deleted it \n");
     return 1;
   }
-  file = fopen(name, "r+b");
+  char* filepath = expand_tilde(name);
+  file = fopen(filepath, "r+b");
+  free(filepath);
   if (file == NULL) {
     printf("File not found\n");
     return 1;
@@ -21,19 +38,19 @@ int import_files(char *name) {
   int np = get_free_block();
   int start_block = np;
   for (int i = 0; i < file_size; i += BLOCK_SIZE) {
-    char buffer[BLOCK_SIZE];
-    memset(buffer, 0, BLOCK_SIZE);
+    char buffer[BLOCK_SIZE] = {0};
     fseek(file, i, SEEK_SET);
     fread(buffer, 1, min(BLOCK_SIZE, file_size - i), file);
-#ifdef DEBUG
-    printf("buffer %s\n", buffer);
-#endif /* DEBUG */
     write_block(buffer, np);
     if (nc != 0) {
       set_value(nc, np);
     } else {
       set_value(np, -1); // this is temp fix for the first block
     }
+#ifdef DEBUG
+    buffer[BLOCK_SIZE-1] = '\0';
+    printf("buffer %s\n", buffer);
+#endif /* DEBUG */
     nc = np;
     np = get_free_block(); // if got and not used it will not be written in the
                            // fat table
@@ -43,7 +60,9 @@ int import_files(char *name) {
                        .attribute = 1,
                        .size = file_size,
                        .frist_cluster = start_block};
-  strncpy(to_add.name, name,10);
+  // get the filename 
+  const char * filename = strrchr(name, '/');
+  strncpy(to_add.name, filename+1,10);
   set_value(nc, -1);
   add_to_dir(to_add);
   write_dir();

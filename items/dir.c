@@ -90,7 +90,11 @@ void write_dir(void) {
   }
   set_value(nc, -1);
 }
-int dir_search(char *name) {
+/*
+ * find the directory by name and make sure that the name
+ * can be taken
+ */
+int dir_search(const char *name) {
   const Item *childrens = current_dir->dir_list.childrens;
   const int n_children = current_dir->dir_list.n_children;
   if (strncmp(name, ".", 11) == 0 || strncmp(name, "..", 11) == 0) {
@@ -104,7 +108,7 @@ int dir_search(char *name) {
   }
   return -1;
 }
-int file_search(char *name) {
+int file_search(const char *name) {
   Item *childrens = current_dir->dir_list.childrens;
   int n_children = current_dir->dir_list.n_children;
   for (int i = 0; i < n_children; i++) {
@@ -132,20 +136,20 @@ void add_to_dir(Item item) {
   // Add the new item to the array
   current_dir->dir_list.childrens[current_dir->dir_list.n_children++] = item;
 }
-// delete both dir and file
+// delete both dir and file note: need to save after it
 void delete_item(int index) {
   if (index < 0)
     return;
-  Item deleted = current_dir->dir_list.childrens[index];
+  Item to_delete = current_dir->dir_list.childrens[index];
   current_dir->dir_list.n_children--;
   for (int i = index; i < current_dir->dir_list.n_children; i++) {
     current_dir->dir_list.childrens[i] = current_dir->dir_list.childrens[i + 1];
   }
   current_dir->dir_list.childrens[current_dir->dir_list.n_children] =
       (Item){{0}, {0}, 0, 0, 0};
-  if (deleted.frist_cluster == 0)
+  if (to_delete.frist_cluster == 0)
     return;
-  int nc = 0, np = deleted.frist_cluster;
+  int nc = 0, np = to_delete.frist_cluster;
   while (np != -1) {
     nc = np;
     np = get_fat_value(np);
@@ -153,9 +157,9 @@ void delete_item(int index) {
   }
 }
 // change the current directory to the given name
-int change_dir(char *name) {
+int change_dir(const char *name) {
   // if the name is ".." go back to the parent directory
-  if (strncmp(name, "..",10) == 0) {
+  if (strncmp(name, "..", 10) == 0) {
     if (current_dir->parent == NULL) {
       printf("Can't go back\n");
       return 1;
@@ -177,7 +181,7 @@ int change_dir(char *name) {
   current_dir->dir = dir;
   current_dir->parent = parent;
   current_dir->dir_list = dir_list;
-  strncpy(current_dir->path, parent->path,10);
+  strncpy(current_dir->path, parent->path, 10);
   strcat(current_dir->path, "/");
   strcat(current_dir->path, name);
 #ifdef DEBUG
@@ -234,4 +238,26 @@ void free_current_dir(void) {
   while (current_dir != NULL) {
     free_dir();
   }
+}
+void delete_dir(const char *name) {
+  change_dir(name);
+  if (current_dir->dir.frist_cluster == 0) {
+    change_dir("..");
+    delete_item(dir_search(name));
+    return;
+  }
+  const Item *children = current_dir->dir_list.childrens;
+  int n_children = current_dir->dir_list.n_children;
+  for (int i = n_children - 1; i >= 0; i--) {
+    if (2 == children[i].attribute) {
+      delete_dir(children[i].name);
+    }
+    else{
+    delete_item(i);
+    }
+  }
+  write_dir();
+  change_dir("..");
+  delete_item(dir_search(name));
+  return;
 }

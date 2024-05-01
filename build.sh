@@ -1,14 +1,28 @@
 #!/bin/zsh
 
 build() {
-    if [ "$1" = "DEBUG" ]; then
-        clang -g -o main main.c -DDEBUG --debug
-        ./main
-        return
-    fi
-
-    clang -o main main.c 
-    ./main
+  # delete the disk
+  if [ "$1" = "-l" ]; then
+      cd build ; rm Disk.txt ; cd ..
+      return
+  fi
+  if [ "$1" = "-c" ]; then
+      cd build ; make clean 
+      ./main
+      cd ..
+      return
+  fi
+  if [ "$1" = "-d" ]; then
+      cmake -B build . -DDEBUG_MODE=ON
+      cd build ; make 
+      ./main
+      cd ..
+      return
+  fi
+  cmake -B build  
+  cd build ; make 
+  ./main
+  cd ..
 }
 
 build "$1"
