@@ -6,7 +6,7 @@ int renameFile(char *filename, char *newName) {
     printf("file not found\n");
     return 1;
   }
-  strncpy(current_dir->dir_list.childrens[file_idx].name, newName,10);
+  strncpy(current_dir->dir_list.childrens[file_idx].name, newName, 10);
   write_dir();
   return 0;
 }
@@ -34,7 +34,7 @@ int catFile(char *name) {
   free(buffer);
   return 0;
 }
-int copyFile(char *name, char *copyPath, char *newName) {
+int copyFile(const char *name, char *copyPath) {
   int file_idx = file_search(name);
   if (file_idx == -1) {
     printf("file not found\n");
@@ -44,7 +44,9 @@ int copyFile(char *name, char *copyPath, char *newName) {
   char *file_content = read_file(childrens[file_idx].frist_cluster);
   int file_size = childrens[file_idx].size;
   char current_dir_path[100];
-  strncpy(current_dir_path, current_dir->path,10);
+  const char *newName = strrchr(copyPath, '/') + 1;
+  current_dir_path[strlen(current_dir_path) - strlen(newName) - 1] = '\0';
+  strncpy(current_dir_path, current_dir->path, 10);
   copyPath = strtok(copyPath, "/");
   while (copyPath != NULL) {
     if (change_dir(copyPath)) {

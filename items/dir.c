@@ -34,7 +34,7 @@ DirList read_dir(int index) {
   int nc = index;
   while (np != -1) {
     array_size += BLOCK_SIZE / sizeof(Item);
-    items = (Item *)realloc(items, array_size * sizeof(Item));
+    items = (Item *)reallocf(items, array_size * sizeof(Item));
     Item *childrens = (Item *)read_block(np);
     nc = np;
     np = get_fat_value(np);
@@ -127,7 +127,7 @@ void add_to_dir(Item item) {
 
     // Resize the array
     current_dir->dir_list.childrens =
-        realloc(current_dir->dir_list.childrens, new_array_size * sizeof(Item));
+        reallocf(current_dir->dir_list.childrens, new_array_size * sizeof(Item));
 
     // Update the array size
     current_dir->dir_list.array_size = new_array_size;

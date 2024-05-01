@@ -4,9 +4,9 @@
 #include "item.h"
 #include <stdio.h>
 #include <string.h>
-int min(int a, int b);
-int import_files(char *name);
-int export_files(char *name);
-char *read_file(int first_cluster);
-int import_buffer(char *buffer, int file_size, char *name);
+int min(const int a,const  int b);
+int import_files(const char *name);
+int export_files(const char *name);
+char *read_file(const int first_cluster);
+void import_buffer(const char *buffer,const int file_size, const char *name);
 #endif

@@ -73,23 +73,21 @@ void runCommand(char *command) {
   } else if (!strcmp(token, "copy")) {
     // copy file
     char *name = strtok(NULL, " ");
-    char *path = strtok(NULL, " ");
-    char *newName = strtok(NULL, " ");
-    if (newName == NULL) {
+    char *copyPath = strtok(NULL, " ");
+    if (copyPath == NULL) {
       printf("needs arguments\n");
       return;
     }
-    copyFile(name, path, newName);
+    copyFile(name, copyPath);
   } else if (!strcmp(token, "mvd")) {
     // move directory 
     char *name = strtok(NULL, " ");
-    char *path = strtok(NULL, " ");
-    char *newName = strtok(NULL, " ");
-    if (newName== NULL) {
+    char *copyPath = strtok(NULL, " ");
+    if (copyPath== NULL) {
       printf("needs arguments\n");
       return;
     }
-    movDir(name, path, newName);
+    movDir(name, copyPath);
   }
 
 #ifdef DEBUG

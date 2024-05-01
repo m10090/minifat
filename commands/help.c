@@ -10,7 +10,7 @@ void help(void) {
     printf("  exit: exit the shell\n");
     printf("  help: display this help message\n");
     printf("  copy: copy a file\n");
-    printf("  delete: delete files\n");
+    printf("  del: delete files\n");
     printf("  rd: remove directory\n");
     printf("  md: make directory\n");
     printf("  cd: change directory\n");
@@ -26,9 +26,9 @@ void help(void) {
     printf("help: display this help message\n");
   } else if (!strcmp(token, "copy")) {
     printf("copy: copy a file\n");
-    printf("Usage: copy <source> <destination> <new name>\n");
+    printf("Usage: copy <source> <destination/new name>\n");
   } else if (!strcmp(token, "delete")) {
-    printf("delete: delete files\n");
+    printf("del: delete files\n");
   } else if (!strcmp(token, "rd")) {
     printf("rd: remove directory\n");
   } else if (!strcmp(token, "md")) {
@@ -43,7 +43,7 @@ void help(void) {
     printf("rename: rename a file\n");
   } else if (!strcmp(token, "mvd")) {
     printf("mvd: move directory\n");
-    printf("Usage: mv <source> <destination> <new name>\n");
+    printf("Usage: mv <source> <destination/new name>\n");
   }
   else {
     printf("Command not found: %s\n", token);

@@ -1,31 +1,26 @@
 #include "files.h" // this is for linter
 #include <stdio.h>
 #include <string.h>
-int min(int a, int b) { return (a > b) ? b : a; }
-static char *expand_tilde(const char *path) {
-    if (path[0] == '~') {
-        const char *homeDir = getenv("HOME");
-        if (homeDir != NULL) {
-            size_t len = strlen(homeDir) + strlen(path) - 1; // -1 to exclude ~
-            char *expanded = (char *)malloc(len + 1); // +1 for null terminator
-            if (expanded != NULL) {
-                strcpy(expanded, homeDir);
-                strcat(expanded, path + 1); // Skip ~
-                return expanded;
-            }
-        }
+int min(const int a, const int b) { return (a > b) ? b : a; }
+static void expand_tilde(const char *path, char *buffer) {
+  if (path[0] == '~') {
+    const char *homeDir = getenv("HOME");
+    if (homeDir != NULL) {
+      strncpy(buffer, homeDir, 99);
+      if (path[1] != '\0')
+        strncat(buffer, path + 1,99);
     }
-    return strdup(path); // No ~ found or memory allocation failed
+  }
 }
-int import_files(char *name) {
+int import_files(const char *name) {
   FILE *file;
   if (file_search(name) != -1) {
     printf("File already exists rename it or deleted it \n");
     return 1;
   }
-  char* filepath = expand_tilde(name);
+  char filepath[100];
+  expand_tilde(name, filepath);
   file = fopen(filepath, "r+b");
-  free(filepath);
   if (file == NULL) {
     printf("File not found\n");
     return 1;
@@ -48,7 +43,7 @@ int import_files(char *name) {
       set_value(np, -1); // this is temp fix for the first block
     }
 #ifdef DEBUG
-    buffer[BLOCK_SIZE-1] = '\0';
+    buffer[BLOCK_SIZE - 1] = '\0';
     printf("buffer %s\n", buffer);
 #endif /* DEBUG */
     nc = np;
@@ -60,15 +55,15 @@ int import_files(char *name) {
                        .attribute = 1,
                        .size = file_size,
                        .frist_cluster = start_block};
-  // get the filename 
-  const char * filename = strrchr(name, '/');
-  strncpy(to_add.name, filename+1,10);
+  // get the filename
+  const char *filename = strrchr(name, '/');
+  strncpy(to_add.name, filename + 1, 10);
   set_value(nc, -1);
   add_to_dir(to_add);
   write_dir();
   return 0;
 }
-int export_files(char *name) {
+int export_files(const char *name) {
   FILE *file;
   int file_idx = file_search(name);
   if (file_idx == -1) {
@@ -87,6 +82,7 @@ int export_files(char *name) {
 #endif /* DEBUG */
   fwrite(buffer, 1, file_size, file);
   free(buffer);
+  fclose(file);
   return 0;
 }
 
@@ -96,7 +92,7 @@ char *read_file(int frist_cluster) {
   char *result = NULL;
   int result_size = 0;
   while (np != -1) {
-    result = realloc(result, result_size + BLOCK_SIZE);
+    result = reallocf(result, result_size + BLOCK_SIZE);
     char *buffer = read_block(np);
     memcpy(result + result_size, buffer, BLOCK_SIZE);
     free(buffer);
@@ -105,7 +101,7 @@ char *read_file(int frist_cluster) {
   }
   return result;
 }
-int import_buffer(char *buffer, int file_size, char *name) {
+void import_buffer(const char *buffer, const int file_size, const char *name) {
   int nc = 0;
   int np = get_free_block();
   int start_block = np;
@@ -128,10 +124,9 @@ int import_buffer(char *buffer, int file_size, char *name) {
                        .attribute = 1,
                        .size = file_size,
                        .frist_cluster = start_block};
-  // 
-  strncpy(to_add.name, name,10);
+  //
+  strncpy(to_add.name, name, 10);
   set_value(nc, -1);
   add_to_dir(to_add);
   write_dir();
-  return 0;
 }
