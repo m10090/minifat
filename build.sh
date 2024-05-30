@@ -6,20 +6,23 @@ build() {
       cd build ; rm Disk.txt ; cd ..
       return
   fi
+  # make clean
   if [ "$1" = "-c" ]; then
-      cd build ; make clean 
-      ./main
+      cd build 
+      make clean 
       cd ..
       return
   fi
+  # make with debug
   if [ "$1" = "-d" ]; then
-      cmake -B build . -DDEBUG_MODE=ON
+      cmake -B build -DCMAKE_BUILD_TYPE=debug . 
       cd build ; make 
       ./main
       cd ..
       return
-  fi
-  cmake -B build  
+  fi 
+  # Defualt build
+  cmake -B build -DCMAKE_BUILD_TYPE=Release .
   cd build ; make 
   ./main
   cd ..

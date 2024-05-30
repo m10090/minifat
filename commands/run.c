@@ -11,9 +11,7 @@ void runCommand(char *command) {
   if (token == NULL) {
     return ;
   }
-#ifdef DEBUG
-  printf("command: %s\n", command);
-#endif
+  debug_print("command: %s\n", command);
   if (!strcmp(token, "cls")) {
     system("clear");
     return;
@@ -51,7 +49,8 @@ void runCommand(char *command) {
   } else if (!strcmp(token, "rename")) {
     char *filename = strtok(NULL, " ");
     char *newname = strtok(NULL, " ");
-    if (newname == NULL) { // if filename is null then newname will also be null
+    // if filename is null then newname will also be null
+    if (newname == NULL) { 
       printf("needs arguments\n");
       return;
     }
@@ -74,6 +73,7 @@ void runCommand(char *command) {
     // copy file
     char *name = strtok(NULL, " ");
     char *copyPath = strtok(NULL, " ");
+    // if name if name is null the copyPath will also be null
     if (copyPath == NULL) {
       printf("needs arguments\n");
       return;
@@ -83,6 +83,7 @@ void runCommand(char *command) {
     // move directory 
     char *name = strtok(NULL, " ");
     char *copyPath = strtok(NULL, " ");
+    // if name is null the copyPath will also be null
     if (copyPath== NULL) {
       printf("needs arguments\n");
       return;

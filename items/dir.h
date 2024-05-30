@@ -1,19 +1,48 @@
 #ifndef DIR_H
 #define DIR_H
-#include "item.h"
 #include "../disk/disk.h"
+#include "item.h"
+
+// initialize the current directory
 void dir_init(void);
-int get_n_children(Item *childrens, int right);
+
+// get the number of children in the directory
+static int get_n_children(Item *childrens, int right);
+
+// read the content of the directory from the virtual disk `return a DirList`
 DirList read_dir(int index);
+
+// write the content of the directory to the virtual disk
 void write_dir(void);
+
+// find the directory by name and make sure that the name can be taken
 int dir_search(const char *name);
+
+// find the file by name and make sure that the name can be taken
 int file_search(const char *name);
+
+// add the item to the directory object
 void add_to_dir(Item item);
+
+// delete the item from the directory object
 void delete_item(int index);
+
+// change the numb of
 int change_dir(const char *name);
+
+// make the directory with the name
 void make_dir(char *name);
+
+// free the current directory with its parents from the memory
 void free_dir(void);
+
+// copy the directory to the new directory
 currentDir *copy_dir(currentDir *new_dir, currentDir *old_dir);
+
+// free the current directory from the memory
 void free_current_dir(void);
-void delete_dir(const char* name);
+
+// delete the directory with the name
+void delete_dir(const char *name);
+
 #endif

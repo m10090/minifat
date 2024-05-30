@@ -1,8 +1,9 @@
 #include "../cli.h"
 #include <string.h>
-int renameFile(char *filename, char *newName) {
-  int file_idx;
-  if ((file_idx = file_search(filename)) == -1) {
+
+int rename_file(char *filename, char *newName) {
+  int file_idx = file_search(filename);
+  if (file_idx == -1) {
     printf("file not found\n");
     return 1;
   }
@@ -10,7 +11,7 @@ int renameFile(char *filename, char *newName) {
   write_dir();
   return 0;
 }
-int deleteFile(char *name) {
+int delete_file(char *name) {
   int file_idx = file_search(name);
   if (file_idx == -1) {
     printf("file not found\n");
@@ -20,7 +21,7 @@ int deleteFile(char *name) {
   write_dir();
   return 0;
 }
-int catFile(char *name) {
+int cat_file(char *name) {
   int filesize;
   int file_idx;
   if ((file_idx = file_search(name)) == -1) {
@@ -34,7 +35,11 @@ int catFile(char *name) {
   free(buffer);
   return 0;
 }
-int copyFile(const char *name, char *copyPath) {
+
+
+
+// TODO refactoring this function
+int copy_file(const char *name, char *copyPath) {
   int file_idx = file_search(name);
   if (file_idx == -1) {
     printf("file not found\n");
@@ -43,10 +48,18 @@ int copyFile(const char *name, char *copyPath) {
   const Item *childrens = current_dir->dir_list.childrens;
   char *file_content = read_file(childrens[file_idx].frist_cluster);
   int file_size = childrens[file_idx].size;
-  char current_dir_path[100];
+
+  // must have / in the path
+  if(*strchr(copyPath, '/') == '\0'){
+    printf("invalid path\n");
+    return -1;
+  }
+  // get the new name of the file from the copyPath
   const char *newName = strrchr(copyPath, '/') + 1;
+  char current_dir_path[100];
   current_dir_path[strlen(current_dir_path) - strlen(newName) - 1] = '\0';
-  strncpy(current_dir_path, current_dir->path, 10);
+  strncpy(current_dir_path, current_dir->path, 100);
+
   copyPath = strtok(copyPath, "/");
   while (copyPath != NULL) {
     if (change_dir(copyPath)) {

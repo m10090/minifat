@@ -1,6 +1,7 @@
 #include "../cli.h" // for linter purpose this is useless but it will make the linter "happy"
 #include <stdio.h>
 #include <string.h>
+
 int md() {
   char *paths = strtok(NULL, " ");
   if (paths == NULL) {

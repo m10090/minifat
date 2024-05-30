@@ -1,6 +1,11 @@
 #include "disk.h"
+
 int fat[BLOCK_SIZE] = {0};
-void init_fat(int file_exists) {
+
+// the number of items in a fat block
+const int fat_block = BLOCK_SIZE / sizeof(int);
+
+void init_fat(char file_exists) {
   int i;
   if (file_exists) {
     read_fat_table();
@@ -25,16 +30,17 @@ void read_fat_table(void) {
   for (int i = 1; i < 5; i++) {
     const char *block = read_block(i);
     // Temporary integer array to hold the data from the block
-    int temp[BLOCK_SIZE / sizeof(int)];
+    int temp[fat_block];
     memcpy(temp, block, BLOCK_SIZE);
     free((void *)block);
 
     // Copy data from temporary array into fat
-    for (int j = 0; j < BLOCK_SIZE / sizeof(int); j++) {
-      fat[(i - 1) * BLOCK_SIZE / sizeof(int) + j] = temp[j];
+    for (int j = 0; j < fat_block; j++) {
+      fat[(i - 1) * fat_block + j] = temp[j];
     }
   }
 }
+
 #ifdef DEBUG
 void print_fat_table(void) {
   int i;
@@ -54,21 +60,23 @@ int get_free_block(void) {
   }
   return -1;
 }
-// get the value of the fat at index
+
 int get_fat_value(int index) {
   if (index < 0 || index >= BLOCK_SIZE)
     return -1;
   return fat[index];
 }
+
 void set_value(int index, int value) {
   if (index < 0 || index >= BLOCK_SIZE)
     return;
   fat[index] = value;
   write_fat_table();
 }
-int get_free_space(void) {
+
+long get_free_space(void) {
   int i;
-  int count = 0;
+  long count = 0;
   for (i = 0; i < BLOCK_SIZE; i++) {
     if (fat[i] == 0) {
       count++;

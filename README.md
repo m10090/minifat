@@ -9,16 +9,16 @@ MiniFAT is a lightweight simulation of a FAT (File Allocation Table) file system
 - **Basic File System Operations:** MiniFAT supports essential file system operations such as file creation, deletion, reading, and writing.
 - **Directory Structure Management:** The project illustrates the management of directory structures for organizing files.
 - **File Allocation Techniques:** MiniFAT showcases file allocation techniques, demonstrating how files are stored and accessed within the file system.
-- **Error Handling:** The simulation includes error handling mechanisms to manage various scenarios, such as disk full conditions or file not found errors.
 - **Command-Line Interface:** Users can interact with MiniFAT through a simple command-line interface, providing a hands-on experience of working with the file system.
 
 ## Purpose
 
-The purpose of MiniFAT is to provide a clear and concise example of how a basic file system operates. It serves as a learning tool for understanding the underlying principles of file systems, disk allocation, and directory management. By exploring the codebase and running simulations, users can gain insights into the complexities of real-world file systems in a simplified environment.
+The purpose of MiniFAT is to provide a clear and concise example of how a basic file system operates. It serves as a learning tool for understanding the underlying principles of file systems, disk allocation, and directory management. 
 
 ## Get Started
 
 To run MiniFAT, you need macOS or Linux as it works with clang.
+you can run with windows not sure about spacing 
 
 ```bash
 git clone github.com/m10090/minifat minifat
@@ -31,16 +31,12 @@ chmod +x build.sh
 
 - `import <filename>`: Import files from your PC. Note: You can import files from outside your project files, but it may result in improper naming.
 - `export <filename>`: Export from your MiniFAT to your PC.
-- `mvd <dirname> <path> <new dirname>`: Move a directory.
-- `copy <filename> <path> <new filename>`: Copy a file.
+- `mvd <dirname> <path/newDirname>`: Move a directory.
+- `copy <filename> <path/newFilename>`: Copy a file.
 - `md <dirname>`: Make directory(s).
 - `cd <dirname>`: Change directory and go back if `dirname = ..`.
 - `dir`: Show the current directory content.
 - `type`: Cat a file.
 - `rd <dirname>`: Remove directory(s).
-- `delete <filename>`: Delete file(s).
-- `rename <filename> <new filename>`: Rename a file.
-
-## Disclaimer
-
-This project serves as an educational tool for learning various concepts in C programming. It showcases the usage of heap memory management, as well as the functions `memset` and `memcpy`, even in scenarios where they might not be necessary. Additionally, it demonstrates the inclusion of unconventional header files. Please note that this project does not utilize a makefile. It is important to understand that this project is not intended to be perfect; rather, it is designed for educational purposes only.
+- `del <filename>`: Delete file(s).
+- `rename <filename> <newFilename>`: Rename a file.

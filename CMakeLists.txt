@@ -4,7 +4,11 @@ project(CMakeTutorial
     DESCRIPTION "minifat simulation"
     LANGUAGES C)
 
-option(DEBUG_MODE "Enable debug mode" OFF)
+
+# if you are in the debug mode, you can use the following command to build the project
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
 add_executable(main
     ./main.c
     commands/files_commands.c
@@ -13,8 +17,9 @@ add_executable(main
     items/files.c
     items/dir.c
     disk/virtual_disk.c
-    disk/fat_table.c
-    )
-if(DEBUG_MODE)
-    target_compile_definitions(main PRIVATE DEBUG)
+    disk/fat_table.c)
+  target_sources(main PUBLIC ./cli.h)
+if(CMAKE_BUILD_TYPE STREQUAL "debug")
+  message("Debug mode")
+  target_compile_definitions(main PRIVATE DEBUG)
 endif()

@@ -7,4 +7,5 @@
 #include "items/item.h"
 #include "items/dir.h"
 #include "items/files.h"
+void debug_print(const char* str, ...);
 #endif // !CLI_H
