@@ -10,6 +10,7 @@ void dir_init(void);
 static int get_n_children(Item *childrens, int right);
 
 // read the content of the directory from the virtual disk `return a DirList`
+// if the index is 0 then DirList is `created not read from the disk`
 DirList read_dir(int index);
 
 // write the content of the directory to the virtual disk
@@ -34,10 +35,10 @@ int change_dir(const char *name);
 void make_dir(char *name);
 
 // free the current directory with its parents from the memory
-void free_dir(void);
+void back_dir(void);
 
 // copy the directory to the new directory
-currentDir *copy_dir(currentDir *new_dir, currentDir *old_dir);
+CurrentDir *copy_dir(CurrentDir *new_dir, CurrentDir *old_dir);
 
 // free the current directory from the memory
 void free_current_dir(void);

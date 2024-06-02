@@ -6,9 +6,8 @@
 int main() {
   disk_init();
   dir_init();
-  write_dir();
-  char command[MAX_COMMAND_LENGTH] = {0};
   while (1) {
+    char command[MAX_COMMAND_LENGTH] = {0};
     printf("%s>", current_dir->path);
     fgets(command, sizeof(command), stdin);
     fflush(stdin);
@@ -21,7 +20,6 @@ int main() {
 
   return 0;
 }
-
 void debug_print(const char *format, ...) {
   va_list args;
   va_start(args, format);

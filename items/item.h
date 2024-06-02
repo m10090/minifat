@@ -15,17 +15,18 @@ typedef struct {
 // dynamic array of items
 typedef struct {
   Item *childrens;
-  int array_size;
-  int n_children;
+  int array_size; 
+  int n_children; 
 } DirList;
 
-typedef struct currentDir {
+typedef struct CurrentDir {
   Item dir;
-  struct currentDir *parent;
+  struct CurrentDir *parent;
   DirList dir_list;
   char path[100];
-} currentDir;
-extern currentDir *current_dir;
+} CurrentDir;
+extern CurrentDir *current_dir;
+#define DIR_SIZE BLOCK_SIZE / sizeof(Item)
 #include "../disk/disk.h"
 #include "../disk/fat_table.h"
 #include "../disk/virtual_disk.h"

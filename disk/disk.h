@@ -1,21 +1,24 @@
 #ifndef DISK_H
 #define DISK_H
 
+#include "fat_table.h"
+#include "virtual_disk.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fat_table.h" 
-#include "virtual_disk.h"
 
+#define BLOCK_SIZE 1024
 
-#define BLOCK_SIZE 1024 
+#ifndef FAT_SIZE
+#define FAT_SIZE 4
+#endif
 
+#ifndef DISK_SIZE
+#define DISK_SIZE 1024
+#endif
 
-
-// variables for this module
-extern FILE *disk;
-// fat table with the useage of each block
-extern int fat[BLOCK_SIZE];
-
+#ifndef DISK_PATH
+#define DISK_PATH "Disk.txt"
+#endif
 
 #endif // !DISK_H

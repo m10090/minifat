@@ -1,4 +1,5 @@
 #include "../cli.h"
+#include <stdio.h>
 #include <string.h>
 
 int rename_file(char *filename, char *newName) {
@@ -36,8 +37,6 @@ int cat_file(char *name) {
   return 0;
 }
 
-
-
 // TODO refactoring this function
 int copy_file(const char *name, char *copyPath) {
   int file_idx = file_search(name);
@@ -50,16 +49,16 @@ int copy_file(const char *name, char *copyPath) {
   int file_size = childrens[file_idx].size;
 
   // must have / in the path
-  if(*strchr(copyPath, '/') == '\0'){
+  if (strchr(copyPath, '/') == NULL) {
     printf("invalid path\n");
     return -1;
   }
   // get the new name of the file from the copyPath
-  const char *newName = strrchr(copyPath, '/') + 1;
+  char *newName = strrchr(copyPath, '/') + 1;
   char current_dir_path[100];
-  current_dir_path[strlen(current_dir_path) - strlen(newName) - 1] = '\0';
   strncpy(current_dir_path, current_dir->path, 100);
 
+  copyPath[strlen(copyPath) - strlen(newName) - 1] = '\0';
   copyPath = strtok(copyPath, "/");
   while (copyPath != NULL) {
     if (change_dir(copyPath)) {
@@ -74,7 +73,11 @@ int copy_file(const char *name, char *copyPath) {
     }
     copyPath = strtok(NULL, "/");
   }
-  import_buffer(file_content, file_size, newName);
+  if (file_search(newName) != -1) {
+    printf("file already exists\n");
+  } else {
+    import_buffer(file_content, file_size, newName);
+  }
   free(file_content);
   free_current_dir();
   dir_init();

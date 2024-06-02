@@ -2,7 +2,7 @@
 #define FAT_TABLE_H
 
 // initialize the fat table
-void init_fat(char file_exists);
+void init_fat(int file_exists);
 
 // write the fat table to the disk
 void write_fat_table(void);

@@ -5,39 +5,34 @@ int fat[BLOCK_SIZE] = {0};
 // the number of items in a fat block
 const int fat_block = BLOCK_SIZE / sizeof(int);
 
-void init_fat(char file_exists) {
+void init_fat(int file_exists) {
   int i;
   if (file_exists) {
     read_fat_table();
     return;
   }
+  // the super block
   fat[0] = -1;
-  fat[1] = 2;
-  fat[2] = 3;
-  fat[3] = 4;
-  fat[4] = -1;
+  // Initialize the fat table
+  for (int i = 1; i < FAT_SIZE; i++) {
+    fat[i] = i + 1;
+  }
+  fat[FAT_SIZE] = -1;
+  // root dir
+  fat[FAT_SIZE + 1] = -1;
   write_fat_table();
 }
 void write_fat_table(void) {
-  write_block((char *)fat, 1);
-  write_block((char *)fat + BLOCK_SIZE, 2);
-  write_block((char *)fat + BLOCK_SIZE * 2, 3);
-  write_block((char *)fat + BLOCK_SIZE * 3, 4);
+  for (int i = 0; i < FAT_SIZE; i++) {
+    write_block((char *)fat + BLOCK_SIZE * i, i + 1);
+  }
 }
 
 void read_fat_table(void) {
-  bzero(fat, sizeof(int) * BLOCK_SIZE);
-  for (int i = 1; i < 5; i++) {
-    const char *block = read_block(i);
-    // Temporary integer array to hold the data from the block
-    int temp[fat_block];
-    memcpy(temp, block, BLOCK_SIZE);
+  for (int i = 0; i < FAT_SIZE; i++) {
+    const char *block = read_block(i + 1);
+    memcpy((char *)fat + i * BLOCK_SIZE, block, BLOCK_SIZE);
     free((void *)block);
-
-    // Copy data from temporary array into fat
-    for (int j = 0; j < fat_block; j++) {
-      fat[(i - 1) * fat_block + j] = temp[j];
-    }
   }
 }
 

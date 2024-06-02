@@ -32,7 +32,7 @@ int import_files(const char *input) {
   char filepath[100] = {0};
   expand_path(input, filepath);
   // Overwrite the file if it exists or create it if it does not exist
-  file = fopen(filepath, "w+b");
+  file = fopen(filepath, "rb");
   if (file == NULL) {
     printf("File not found\n");
     return 1;
@@ -40,32 +40,27 @@ int import_files(const char *input) {
   // get the file size
   fseek(file, 0, SEEK_END);
   long file_size = ftell(file);
-  debug_print("file size %ld\n", file_size);
   fseek(file, 0, SEEK_SET);
   if (file_size > get_free_space()) {
     printf("Not enough space\n");
     return 1;
   }
 
-  int nc = 0;
-  int np = get_free_block();
-  int start_block = np;
+  int next_cluster = 0;
+  int current_cluster = get_free_block();
+  int start_block = current_cluster;
   for (int i = 0; i < file_size; i += BLOCK_SIZE) {
     char buffer[BLOCK_SIZE] = {0};
     fseek(file, i, SEEK_SET);
     fread(buffer, 1,
           // get the min of the bloc size and the remaining size
           min(BLOCK_SIZE, file_size - i), file);
-    write_block(buffer, np);
-    if (nc != 0) {
-      set_value(nc, np);
+    write_block(buffer, current_cluster);
+    if (i + BLOCK_SIZE >= file_size) {
+      set_value(current_cluster, -1);
     } else {
-      // this is temp fix for the first block
-      set_value(np, -1);
+      set_value(current_cluster, next_cluster = get_free_block());
     }
-    // if np is take from the fat table it will not be written in the fat table
-    nc = np;
-    np = get_free_block();
   }
   Item to_add = {.name = "",
                  .empty = {0},
@@ -91,7 +86,7 @@ int import_files(const char *input) {
     return 1;
   }
   strncpy(to_add.name, filename + 1, 10);
-  set_value(nc, -1);
+  set_value(next_cluster, -1);
   add_to_dir(to_add);
   write_dir();
   return 0;

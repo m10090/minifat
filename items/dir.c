@@ -1,14 +1,14 @@
 #include "dir.h"
 #include "../cli.h"
+#include "item.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-const int dir_size = BLOCK_SIZE / sizeof(Item);
 
-currentDir *current_dir = NULL;
+CurrentDir *current_dir = NULL;
 
 void dir_init(void) {
-  current_dir = (currentDir *)malloc(sizeof(currentDir));
+  current_dir = (CurrentDir *)malloc(sizeof(CurrentDir));
   current_dir->dir = (Item){"root", {0}, 2, -2, 5};
   current_dir->parent = NULL;
   current_dir->dir_list = read_dir(5);
@@ -20,34 +20,31 @@ static int get_n_children(Item *childrens, int right) {
   while (left <= right) {
     int mid = left + (right - left) / 2;
     if (childrens[mid].attribute == 0) {
-      right = mid - 1; // Move to the left half
+      right = mid - 1;
     } else {
-      left = mid + 1; // Move to the right half
+      left = mid + 1;
     }
   }
   return left;
 }
 
 DirList read_dir(int index) {
-  int np = index;
-  if (np == 0)
+  int current_pointer = index;
+  if (current_pointer == 0)
+    // create a new DirList
     return (DirList){NULL, 0, 0};
   Item *items = NULL;
   int array_size = 0;
-  int nc = index;
-  while (np != -1) {
-    array_size += dir_size;
+  while (current_pointer != -1) {
+    // increase the size of the array
+    array_size += DIR_SIZE;
     items = (Item *)reallocf(items, array_size * sizeof(Item));
-    Item *childrens = (Item *)read_block(np);
-    nc = np;
-    np = get_fat_value(np);
-    memcpy(items + array_size - dir_size, childrens,
-           (dir_size) * sizeof(Item));
-    if (np == 0) {
-      set_value(nc, -1);
-      np = -1;
-    }
+
+    Item *childrens = (Item *)read_block(current_pointer);
+    memcpy(items + array_size - DIR_SIZE, childrens, BLOCK_SIZE);
     free(childrens);
+
+    current_pointer = get_fat_value(current_pointer);
   }
   int n_children = get_n_children(items, array_size - 1);
   debug_print("Reading dir %d\n", index);
@@ -56,42 +53,42 @@ DirList read_dir(int index) {
   return (DirList){items, array_size, n_children};
 }
 
-
 void write_dir(void) {
-  int np = current_dir->dir.frist_cluster;
-  if (np == 0) {
-    np = get_free_block();
-    current_dir->dir.frist_cluster = np;
-    currentDir *current_dir_copy = current_dir;
+  int current_cluster = current_dir->dir.frist_cluster;
+  int next_cluster = 0;
+  // if the directory is frist time created
+  if (current_cluster == 0) {
+    current_cluster = get_free_block();
+    // upadate the frist cluster of the directory
+    current_dir->dir.frist_cluster = current_cluster;
+    // change the current directory to the parent directory to add the updates
+    CurrentDir *current_dir_copy = current_dir;
     current_dir = current_dir->parent;
     current_dir->dir_list.childrens[dir_search(current_dir_copy->dir.name)] =
         current_dir_copy->dir;
     write_dir();
+    // back to normal
     current_dir = current_dir_copy;
   }
-  int nc = 0;
-  for (int i = 0; i < current_dir->dir_list.array_size;
-       i += dir_size) {
+  debug_print("dir_list size %d\n", current_dir->dir_list.array_size);
+  for (int i = 0; i < current_dir->dir_list.array_size; i += DIR_SIZE) {
 
-    debug_print("Writing block %d %d\n", np, i);
-    write_block((char *)(current_dir->dir_list.childrens + i), np);
-    nc = np;
-    np = get_fat_value(np);
-    if (np == 0) {
-      if (i + dir_size > current_dir->dir_list.array_size)
-        set_value(nc, -1);
-      else
-        set_value(nc, np = get_free_block());
+    debug_print("Writing block %d %d\n", current_cluster, i);
+    write_block((char *)(current_dir->dir_list.childrens + i), current_cluster);
+    next_cluster = get_fat_value(current_cluster);
+    if (next_cluster == -1 &&
+        i + DIR_SIZE < current_dir->dir_list.array_size) {
+      next_cluster = get_free_block();
+      set_value(current_cluster, next_cluster);
     }
-    if (np == -1 &&
-        i + dir_size < current_dir->dir_list.array_size) {
-      np = get_free_block();
-      set_value(nc, np);
+    if (next_cluster == 0) {
+      next_cluster = get_free_block();
+      set_value(current_cluster, next_cluster);
     }
+    current_cluster = next_cluster;
   }
-  set_value(nc, -1);
+  set_value(current_cluster, -1);
 }
-
 
 int dir_search(const char *name) {
   const Item *childrens = current_dir->dir_list.childrens;
@@ -108,7 +105,6 @@ int dir_search(const char *name) {
   return -1;
 }
 
-
 int file_search(const char *name) {
   Item *childrens = current_dir->dir_list.childrens;
   int n_children = current_dir->dir_list.n_children;
@@ -121,21 +117,14 @@ int file_search(const char *name) {
   return -1;
 }
 
-
 void add_to_dir(Item item) {
   if (current_dir->dir_list.n_children == current_dir->dir_list.array_size) {
-    // Calculate the new array size
-    int new_array_size = current_dir->dir_list.array_size + dir_size;
-
-    // Resize the array
+    // update the size of the array in Item
+    int new_array_size = current_dir->dir_list.array_size + DIR_SIZE;
     current_dir->dir_list.childrens = reallocf(current_dir->dir_list.childrens,
                                                new_array_size * sizeof(Item));
-
-    // Update the array size
     current_dir->dir_list.array_size = new_array_size;
   }
-
-  // Add the new item to the array
   current_dir->dir_list.childrens[current_dir->dir_list.n_children++] = item;
 }
 
@@ -167,9 +156,7 @@ int change_dir(const char *name) {
       printf("Can't go back\n");
       return 1;
     }
-    free_dir();
-    // current_dir->dir_list = read_dir(current_dir->dir.frist_cluster);
-    // current_dir->dir = current_dir->dir;
+    back_dir();
     return 0;
   }
   int index = dir_search(name);
@@ -177,16 +164,22 @@ int change_dir(const char *name) {
     printf("Directory not found\n");
     return 1;
   }
-  currentDir *parent = current_dir;
+  // get next directory content
+
+  CurrentDir *parent = current_dir;
   Item dir = current_dir->dir_list.childrens[index];
   DirList dir_list = read_dir(dir.frist_cluster);
-  current_dir = (currentDir *)malloc(sizeof(currentDir));
+
+  current_dir = (CurrentDir *)malloc(sizeof(CurrentDir));
   current_dir->dir = dir;
   current_dir->parent = parent;
   current_dir->dir_list = dir_list;
-  strncpy(current_dir->path, parent->path, 10);
+
+  // update the path of the current directory
+  strncpy(current_dir->path, parent->path, 100);
   strcat(current_dir->path, "/");
   strcat(current_dir->path, name);
+  current_dir->path[99] = '\0';
   return 0;
 }
 // add a directory to the current directory
@@ -197,22 +190,28 @@ void make_dir(char *name) {
   }
   // it gets a block number of 0 until it is made
   Item item = (Item){{0}, {0}, 2, 0, 0};
+
+  // add the name
   strncpy(item.name, name, 10);
   item.name[10] = '\0';
   add_to_dir(item);
   write_dir();
 }
 // free the current directory (from memory) and go back to the parent directory
-void free_dir(void) {
-  currentDir *parent = current_dir->parent;
+void back_dir(void) {
+
+  CurrentDir *parent = current_dir->parent;
+  // free the current directory
   free(current_dir->dir_list.childrens);
   free(current_dir);
+
+  // go to the parent directory
   current_dir = parent;
 }
 // deep copy the given current directory to the new directory
 // and set the current directory to the new directory
-currentDir *copy_dir(currentDir *new_dir, currentDir *old_dir) {
-  currentDir *parents = NULL;
+CurrentDir *copy_dir(CurrentDir *new_dir, CurrentDir *old_dir) {
+  CurrentDir *parents = NULL;
   if (old_dir->parent != NULL) {
     parents = copy_dir(new_dir->parent, old_dir->parent);
   }
@@ -232,17 +231,19 @@ currentDir *copy_dir(currentDir *new_dir, currentDir *old_dir) {
 
 void free_current_dir(void) {
   while (current_dir != NULL) {
-    free_dir();
+    back_dir();
   }
 }
 
 void delete_dir(const char *name) {
   change_dir(name);
-  if (current_dir->dir.frist_cluster == 0) {
+  // id the directory is uninitalized
+  if (0 == current_dir->dir.frist_cluster) {
     change_dir("..");
     delete_item(dir_search(name));
     return;
   }
+
   const Item *children = current_dir->dir_list.childrens;
   int n_children = current_dir->dir_list.n_children;
   for (int i = n_children - 1; i >= 0; i--) {
@@ -252,6 +253,7 @@ void delete_dir(const char *name) {
       delete_item(i);
     }
   }
+  // save the change
   write_dir();
   change_dir("..");
   delete_item(dir_search(name));

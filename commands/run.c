@@ -5,11 +5,11 @@
 #include <string.h>
 
 // return the last index in the command string
-void runCommand(char *command) {
+void runCommand(char command[100]) {
   // get the index of the first space
   char *token = strtok(command, " ");
   if (token == NULL) {
-    return ;
+    return;
   }
   debug_print("command: %s\n", command);
   if (!strcmp(token, "cls")) {
@@ -50,25 +50,25 @@ void runCommand(char *command) {
     char *filename = strtok(NULL, " ");
     char *newname = strtok(NULL, " ");
     // if filename is null then newname will also be null
-    if (newname == NULL) { 
+    if (newname == NULL) {
       printf("needs arguments\n");
       return;
     }
-    renameFile(filename, newname);
+    rename_file(filename, newname);
   } else if (!strcmp(token, "del")) {
     token = strtok(NULL, " ");
     while (token != NULL) {
-      deleteFile(token);
+      delete_file(token);
       token = strtok(NULL, " ");
     }
   } else if (!strcmp(token, "type")) {
     // cat the file
     token = strtok(NULL, " ");
-    if(token == NULL){
+    if (token == NULL) {
       printf("needs arguments\n");
       return;
     }
-    catFile(token);
+    cat_file(token);
   } else if (!strcmp(token, "copy")) {
     // copy file
     char *name = strtok(NULL, " ");
@@ -78,17 +78,17 @@ void runCommand(char *command) {
       printf("needs arguments\n");
       return;
     }
-    copyFile(name, copyPath);
+    copy_file(name, copyPath);
   } else if (!strcmp(token, "mvd")) {
-    // move directory 
+    // move directory
     char *name = strtok(NULL, " ");
     char *copyPath = strtok(NULL, " ");
     // if name is null the copyPath will also be null
-    if (copyPath== NULL) {
+    if (copyPath == NULL) {
       printf("needs arguments\n");
       return;
     }
-    movDir(name, copyPath);
+    mov_dir(name, copyPath);
   }
 
 #ifdef DEBUG
@@ -96,6 +96,7 @@ void runCommand(char *command) {
     print_fat_table();
   }
 #endif /* ifdef DEBUG */
+
   else {
     printf("Command not found: %s\n", token);
   }

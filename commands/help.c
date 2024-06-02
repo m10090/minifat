@@ -1,5 +1,5 @@
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 void help(void) {
   char *token = strtok(NULL, " ");
@@ -27,7 +27,7 @@ void help(void) {
   } else if (!strcmp(token, "copy")) {
     printf("copy: copy a file\n");
     printf("Usage: copy <source> <destination/new name>\n");
-  } else if (!strcmp(token, "delete")) {
+  } else if (!strcmp(token, "del")) {
     printf("del: delete files\n");
   } else if (!strcmp(token, "rd")) {
     printf("rd: remove directory\n");
@@ -44,8 +44,7 @@ void help(void) {
   } else if (!strcmp(token, "mvd")) {
     printf("mvd: move directory\n");
     printf("Usage: mv <source> <destination/new name>\n");
-  }
-  else {
+  } else {
     printf("Command not found: %s\n", token);
   }
 }
