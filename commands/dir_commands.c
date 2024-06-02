@@ -99,8 +99,8 @@ int mov_dir(char *name, char *copyPath) {
   // delete the direcotry from the current_dir
   delete_item(dir_idx);
   // getting the directory newName from the copyPath
-
   const char *newName = strrchr(copyPath, '/') + 1;
+  // update the path to not include the newName
   int copyPath_len = strlen(copyPath);
   int newName_len = strlen(newName);
   copyPath[copyPath_len - newName_len - 1] = '\0';
@@ -126,7 +126,6 @@ int mov_dir(char *name, char *copyPath) {
         change_dir(copyPath);
         copyPath = strtok(NULL, "/");
       }
-      // add the directory again
       strncpy(dir.name, oldname, 10);
       add_to_dir(dir);
       write_dir();
