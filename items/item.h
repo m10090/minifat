@@ -1,6 +1,8 @@
 #ifndef ITEM_H
 #define ITEM_H
 
+#define ITEM_FILE 1
+#define ITEM_DIR 2
 
 typedef struct {
   char name[11];

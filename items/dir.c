@@ -98,7 +98,7 @@ int dir_search(const char *name) {
   }
   for (int i = 0; i < n_children; i++) {
     if ((strncmp(childrens[i].name, name, 11) == 0) &&
-        (childrens[i].attribute == 2)) {
+        (childrens[i].attribute == ITEM_DIR)) {
       return i;
     }
   }
@@ -110,7 +110,7 @@ int file_search(const char *name) {
   int n_children = current_dir->dir_list.n_children;
   for (int i = 0; i < n_children; i++) {
     if ((strncmp(childrens[i].name, name, 11) == 0) &&
-        (childrens[i].attribute == 1)) {
+        (childrens[i].attribute == ITEM_FILE)) {
       return i;
     }
   }
@@ -189,7 +189,7 @@ void make_dir(char *name) {
     return;
   }
   // it gets a block number of 0 until it is made
-  Item item = (Item){{0}, {0}, 2, 0, 0};
+  Item item = (Item){{0}, {0}, ITEM_DIR, 0, 0};
 
   // add the name
   strncpy(item.name, name, 10);
@@ -247,7 +247,7 @@ void delete_dir(const char *name) {
   const Item *children = current_dir->dir_list.childrens;
   int n_children = current_dir->dir_list.n_children;
   for (int i = n_children - 1; i >= 0; i--) {
-    if (2 == children[i].attribute) {
+    if (ITEM_DIR == children[i].attribute) {
       delete_dir(children[i].name);
     } else {
       delete_item(i);

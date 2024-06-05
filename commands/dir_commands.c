@@ -72,11 +72,12 @@ int dir(char *paths) {
   Item *childrens = current_dir->dir_list.childrens;
   for (int i = 0; i < current_dir->dir_list.n_children; i++) {
 
-    if (childrens[i].attribute == 2)
-      printf("%s", "\x1b[11m");
-    printf("%s ", childrens[i].name);
-    if (childrens[i].attribute == 2)
-      printf("%s", "\033[0m");
+    if (childrens[i].attribute == ITEM_DIR)
+      printf("\033[0;31m");
+    else
+      printf("\033[0;34m");
+    printf("%s", childrens[i].name);
+    printf("%s ", "\033[0m");
   }
   printf("\n");
 

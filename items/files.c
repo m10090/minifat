@@ -2,6 +2,7 @@
 #include "../cli.h"
 #include "dir.h"
 #include "item.h"
+#include <stdio.h>
 
 // as c doesn't have a min function :/
 static int min(const int a, const int b) { return (a > b) ? b : a; }
@@ -24,7 +25,7 @@ static void expand_path(const char *path, char buffer[100]) {
 }
 
 int import_files(const char *input) {
-  FILE *file;
+  FILE* file;
   if (file_search(input) != -1) {
     printf("File already exists rename it or deleted it \n");
     return 1;
@@ -93,7 +94,7 @@ int import_files(const char *input) {
 }
 
 int export_files(const char *name) {
-  FILE *file;
+  FILE *file; 
   // check if the file exists
   int file_idx = file_search(name);
   if (file_idx == -1) {
@@ -108,15 +109,15 @@ int export_files(const char *name) {
   const int file_size = childrens[file_idx].size;
 
   char *buffer = read_file(frist_cluster);
-  {
 
-    debug_print("frist cluster of file %d\n", frist_cluster);
-    debug_print("file size %d\n", file_size);
-    debug_print("buffer %s\n", buffer);
 
-    // write the buffer to the file
-    fwrite(buffer, 1, file_size, file);
-  }
+  debug_print("frist cluster of file %d\n", frist_cluster);
+  debug_print("file size %d\n", file_size);
+  debug_print("buffer %s\n", buffer);
+
+  // write the buffer to the file
+  fwrite(buffer, 1, file_size, file);
+
   free(buffer);
 
   fclose(file);
